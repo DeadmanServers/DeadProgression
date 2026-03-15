@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,9 +119,9 @@ public class ProgressionDebugCommand implements CommandExecutor {
             }
             case "removedescription" -> {
                 try {
-                    Integer line = Integer.parseInt(args[2]);
+                    int line = Integer.parseInt(args[2]);
                     abilityData.removeDescription(line - 1);
-                    player.sendRichMessage("<gree>SUCCESS: <white>You have removed the description for <green>" + abilityData.getName());
+                    player.sendRichMessage("<green>SUCCESS: <white>You have removed the description for <green>" + abilityData.getName());
                     return true;
                 } catch (NumberFormatException e) {
                     player.sendRichMessage("<green>ERROR: <white>That is not a valid number.");
@@ -132,8 +133,7 @@ public class ProgressionDebugCommand implements CommandExecutor {
                 player.sendRichMessage("<green>SUCCESS: <white>You have cleared the description for <green>" + abilityData.getName());
             }
             case "adddescription" -> {
-
-                if (!abilityData.addDescription(args))
+                List<String> newDescription = String.join(Arrays.copyOfRange(args, 2, args.length));
             }
         }
 

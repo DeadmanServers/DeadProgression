@@ -92,8 +92,9 @@ public class AbilityRegistry {
     }
     public AbilityData get(String name) {
         for (UUID id : abilityData.keySet()) {
-            if (abilityData.get(id).getName().equals(name)) {
-                return abilityData.get(id);
+            AbilityData data = this.abilityData.get(id);
+            if (data.getName().equals(name)) {
+                return data;
             }
         }
         return null;
