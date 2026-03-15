@@ -7,12 +7,14 @@ public class AbilityData {
 
     private final UUID id;
     private String name;
+    private AbilityType type;
     private List<String> description;
     private double value;
 
-    public AbilityData(UUID id, String name, List<String> description, double value) {
+    public AbilityData(UUID id, String name, AbilityType type, List<String> description, double value) {
         this.id = id;
         this.name = name;
+        this.type = type;
         this.description = description;
         this.value = value;
     }
@@ -22,11 +24,15 @@ public class AbilityData {
     public String getName() {
         return name;
     }
+
     public List<String> getDescription() {
         return description;
     }
     public double getValue() {
         return value;
+    }
+    public AbilityType getType() {
+        return type;
     }
     public boolean setName(String name) {
         if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
@@ -34,6 +40,17 @@ public class AbilityData {
         }
         name = name.trim();
         this.name = name;
+        return true;
+    }
+    public void setType(AbilityType type) {
+        this.type = type;
+    }
+    public boolean setType(String type) {
+        AbilityType abilityType = AbilityType.valueOf(type);
+        if (abilityType == null) {
+            return false;
+        }
+        setType(abilityType);
         return true;
     }
     public boolean setDescription(List<String> description) {

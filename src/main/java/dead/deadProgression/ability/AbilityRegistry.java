@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class AbilityRegistry {
 
-    public Map<UUID, AbilityData> abilityData = new HashMap<>();
+    private Map<UUID, AbilityData> abilityData = new HashMap<>();
     private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/abilitydata.yml");
     {
         file.mkdirs();
@@ -45,7 +45,7 @@ public class AbilityRegistry {
                     double value = yml.getDouble(ymlVar + ".Value");
 
 
-                    register(id, new AbilityData(id, name, description, value));
+                    register(id, new AbilityData(id, name, type, description, value));
                 } catch (IllegalArgumentException e) {
                     continue;
                 }
@@ -66,6 +66,7 @@ public class AbilityRegistry {
 
             String ymlVar = "AbilityData." + id;
             String name = data.getName();
+            AbilityType type = data.getType();
             List<String> description = data.getDescription();
             double value = data.getValue();
 
@@ -74,9 +75,12 @@ public class AbilityRegistry {
             } else {
                 yml.set(ymlVar + ".Name", name);
             }
-            if (description != null) {
-                yml.set(ymlVar + ".Description", description);
+            if (type == null) {
+                DeadProgression.INSTANCE.getLogger().warning("AbilityData type not found! Disabling this ability." + id);
+                type = AbilityType.NO_VALUE;
             }
+            yml.set(ymlVar + ".Type", type.toString());
+            yml.set(ymlVar + ".Description", description);
             yml.set(ymlVar + ".Value", value);
         }
         yml.saveAsync(file);
