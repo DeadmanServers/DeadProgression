@@ -4,10 +4,7 @@ import dead.deadProgression.DeadProgression;
 import poa.poalib.yml.PoaYaml;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class AbilityRegistry {
 
@@ -93,13 +90,49 @@ public class AbilityRegistry {
     public AbilityData get(UUID id) {
         return this.abilityData.get(id);
     }
+    public AbilityData get(String name) {
+        for (UUID id : abilityData.keySet()) {
+            if (abilityData.get(id).getName().equals(name)) {
+                return abilityData.get(id);
+            }
+        }
+        return null;
+    }
+    public List<AbilityData> getAll() {
+        return new ArrayList<>(abilityData.values());
+    }
+    public List<String> getAllNames() {
+        List<String> list = new ArrayList<>();
+        for (UUID id : abilityData.keySet()) {
+            list.add(abilityData.get(id).getName());
+        }
+        return list;
+    }
     public boolean exists(UUID id) {
         return this.abilityData.containsKey(id);
+    }
+    public boolean exists(String name) {
+        for (UUID id : abilityData.keySet()) {
+            if (abilityData.get(id).getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
     public void unregister(UUID id) {
         this.abilityData.remove(id);
     }
-
+    public void unregister(String name) {
+        for (UUID id : abilityData.keySet()) {
+            if (abilityData.get(id).getName().equalsIgnoreCase(name)) {
+                abilityData.remove(id);
+                break;
+            }
+        }
+    }
+    public void unregister(AbilityData abilityData) {
+        this.abilityData.remove(abilityData.getId());
+    }
 
 
 }
