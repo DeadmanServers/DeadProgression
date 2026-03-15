@@ -14,7 +14,7 @@ public class AbilityRegistry {
     private Map<UUID, AbilityData> abilityData = new HashMap<>();
     private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/abilitydata.yml");
     {
-        file.mkdirs();
+        file.getParentFile().mkdirs();
     }
     private final PoaYaml yml = PoaYaml.loadFromFile(file, true);
 
