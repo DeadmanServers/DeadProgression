@@ -5,6 +5,7 @@ import poa.poalib.yml.PoaYaml;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,11 +13,11 @@ public class AbilityRegistry {
 
     public Map<UUID, AbilityData> abilityData = new HashMap<>();
     private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/abilitydata.yml");
-    private final PoaYaml yml = PoaYaml.loadFromFile(file, true);
-
     {
         file.mkdirs();
     }
+    private final PoaYaml yml = PoaYaml.loadFromFile(file, true);
+
 
     public void load() {
         if (yml.isConfigurationSection("AbilityData")) {
@@ -28,7 +29,15 @@ public class AbilityRegistry {
                     }
                     String ymlVar = "AbilityData." + data;
 
-                    AbilityType
+                    AbilityType type = AbilityType.valueOf(ymlVar + ".Type");
+                    String name = yml.getString(ymlVar + ".Name");
+                    List<String> description = yml.getStringList(ymlVar + ".Description");
+                    double value = yml.getDouble(ymlVar + ".Value");
+
+
+                    register(id, new AbilityData(id, name, description, value));
+                } catch (IllegalArgumentException e) {
+                    continue;
                 }
             }
         }
