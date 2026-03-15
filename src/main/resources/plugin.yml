@@ -4,3 +4,6 @@ main: dead.deadProgression.DeadProgression
 api-version: '1.21'
 depend:
   - PoaLib
+commands:
+  upgradedebug:
+    permission: op

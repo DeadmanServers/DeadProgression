@@ -13,7 +13,7 @@ public final class DeadProgression extends JavaPlugin {
 
         saveDefaultConfig();
 
-        getCommand("/upgradedebug").setExecutor(new ProgressionDebugCommand());
+        getCommand("upgradedebug").setExecutor(new ProgressionDebugCommand());
 
     }
 

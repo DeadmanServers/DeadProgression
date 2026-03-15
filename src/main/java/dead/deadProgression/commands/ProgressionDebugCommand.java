@@ -15,7 +15,7 @@ public class ProgressionDebugCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            player.sendRichMessage("&cError: &e/upgradedebug [arguments to be determined]");
+            player.sendRichMessage("<red>Error: &e/upgradedebug [arguments to be determined]");
         }
 
 
