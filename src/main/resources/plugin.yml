@@ -1,0 +1,6 @@
+name: DeadProgression
+version: '0.0.1'
+main: dead.deadProgression.DeadProgression
+api-version: '1.21'
+depend:
+  - PoaLib
