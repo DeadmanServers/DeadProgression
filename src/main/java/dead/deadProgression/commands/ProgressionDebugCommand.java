@@ -47,11 +47,14 @@ public class ProgressionDebugCommand implements CommandExecutor {
         }
 
         AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
-        AbilityData abilityData = abilityRegistry.get(args[1]);
-        if (!args[1].isBlank() && !args[1].equalsIgnoreCase("createability") && !args[1].equalsIgnoreCase("listabilities")) {
-            if (abilityData == null) {
-                player.sendRichMessage("<red>ERROR: <yellow>That ability does not exist.");
-                return true;
+        AbilityData abilityData = null;
+        if (args.length != 1) {
+            if (!args[1].isBlank() && !args[1].equalsIgnoreCase("createability") && !args[1].equalsIgnoreCase("listabilities")) {
+                abilityData = abilityRegistry.get(args[1]);
+                if (abilityData == null) {
+                    player.sendRichMessage("<red>ERROR: <yellow>That ability does not exist.");
+                    return true;
+                }
             }
         }
 
