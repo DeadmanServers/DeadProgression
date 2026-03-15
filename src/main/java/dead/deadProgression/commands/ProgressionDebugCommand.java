@@ -98,7 +98,9 @@ public class ProgressionDebugCommand implements CommandExecutor {
                 return true;
             }
             case "setdescription" -> {
-                if (!abilityData.setDescription(List.of(args[2]))) {
+                @NotNull String[] strings = Arrays.copyOfRange(args, 2, args.length);
+                String joined = String.join(" ", strings);
+                if (!abilityData.setDescription(List.of(joined))) {
                     player.sendRichMessage("<red>ERROR: <yellow>Something went wrong setting the description.");
                     return true;
                 }
@@ -133,7 +135,9 @@ public class ProgressionDebugCommand implements CommandExecutor {
                 player.sendRichMessage("<green>SUCCESS: <white>You have cleared the description for <green>" + abilityData.getName());
             }
             case "adddescription" -> {
-                List<String> newDescription = String.join(Arrays.copyOfRange(args, 2, args.length));
+                @NotNull String[] strings = Arrays.copyOfRange(args, 2, args.length);
+                String joined = String.join(" ", strings);
+                abilityData.addDescription(joined);
             }
         }
 
