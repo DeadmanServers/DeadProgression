@@ -62,11 +62,15 @@ public class AbilityData {
         this.description = description;
         return true;
     }
-    public void removeDescription(Integer descriptionLine) {
-        removeDescription(this.description.get(descriptionLine));
+    public void removeDescription(int descriptionLine) {
+        if (!description.isEmpty()) {
+            this.description.set(descriptionLine, null);
+        }
     }
     public void removeDescription(String description) {
-        this.description.remove(description);
+        if (!description.isEmpty()) {
+            this.description.remove(description);
+        }
     }
     public void clearDescription() {
         this.description.clear();
