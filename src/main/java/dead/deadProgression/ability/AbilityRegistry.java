@@ -20,6 +20,7 @@ public class AbilityRegistry {
 
 
     public void load() {
+        DeadProgression.INSTANCE.getLogger().info("Loading Ability Data...");
         if (yml.isConfigurationSection("AbilityData")) {
             for (String data : yml.getConfigurationSection("AbilityData").getKeys(false)) {
                 try {
@@ -29,8 +30,17 @@ public class AbilityRegistry {
                     }
                     String ymlVar = "AbilityData." + data;
 
-                    AbilityType type = AbilityType.valueOf(ymlVar + ".Type");
+                    String typeString = yml.getString(ymlVar + ".Type");
+                    if (typeString == null) {
+                        DeadProgression.INSTANCE.getLogger().warning("AbilityData type not found! " + data);
+                        continue;
+                    }
+                    AbilityType type = AbilityType.valueOf(typeString);
                     String name = yml.getString(ymlVar + ".Name");
+                    if (name == null) {
+                        DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! " + data);
+                        continue;
+                    }
                     List<String> description = yml.getStringList(ymlVar + ".Description");
                     double value = yml.getDouble(ymlVar + ".Value");
 
@@ -41,6 +51,36 @@ public class AbilityRegistry {
                 }
             }
         }
+        DeadProgression.INSTANCE.getLogger().info("Completed Loading Ability Data!");
+    }
+
+    public void save() {
+        DeadProgression.INSTANCE.getLogger().info("Saving AbilityData...");
+        for (UUID id : abilityData.keySet()) {
+            AbilityData data = abilityData.get(id);
+
+            if (data == null) {
+                DeadProgression.INSTANCE.getLogger().warning("AbilityData id not found! " + id);
+                continue;
+            }
+
+            String ymlVar = "AbilityData." + id;
+            String name = data.getName();
+            List<String> description = data.getDescription();
+            double value = data.getValue();
+
+            if (name == null) {
+                DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! This ability may not load properly." + id);
+            } else {
+                yml.set(ymlVar + ".Name", name);
+            }
+            if (description != null) {
+                yml.set(ymlVar + ".Description", description);
+            }
+            yml.set(ymlVar + ".Value", value);
+        }
+        yml.saveAsync(file);
+        DeadProgression.INSTANCE.getLogger().info("Completed Saving AbilityData!");
     }
 
     public void register(UUID id, AbilityData abilityData) {
