@@ -52,12 +52,12 @@ public class AbilityRegistry {
     }
 
     public void save() {
-        DeadProgression.INSTANCE.getLogger().info("Saving AbilityData...");
+        DeadProgression.INSTANCE.getLogger().info("Saving Ability Data...");
         for (UUID id : abilityData.keySet()) {
             AbilityData data = abilityData.get(id);
 
             if (data == null) {
-                DeadProgression.INSTANCE.getLogger().warning("AbilityData id not found! " + id);
+                DeadProgression.INSTANCE.getLogger().warning("Ability Data id not found! " + id);
                 continue;
             }
 
@@ -68,7 +68,7 @@ public class AbilityRegistry {
             double value = data.getValue();
 
             if (name == null) {
-                DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! This ability may not load properly." + id);
+                DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! This ability may not load properly. " + id);
             } else {
                 yml.set(ymlVar + ".Name", name);
             }
@@ -93,7 +93,7 @@ public class AbilityRegistry {
     public AbilityData get(String name) {
         for (UUID id : abilityData.keySet()) {
             AbilityData data = this.abilityData.get(id);
-            if (data.getName().equals(name)) {
+            if (data.getName().equalsIgnoreCase(name)) {
                 return data;
             }
         }

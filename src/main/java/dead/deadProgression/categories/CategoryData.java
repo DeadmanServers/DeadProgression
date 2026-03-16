@@ -44,16 +44,24 @@ public class CategoryData {
     }
 
     public boolean moveUpgrade(int newIndex, UUID upgrade) {
+
         int currentIndex = this.upgrades.indexOf(upgrade);
+
         if (newIndex < 0 || newIndex > upgrades.size()) {
             return false;
         }
+        if (currentIndex == -1) {
+            return false;
+        }
+
         this.upgrades.remove(currentIndex);
+
         if (currentIndex <= newIndex) {
             this.upgrades.add(newIndex - 1, upgrade);
         } else {
             this.upgrades.add(newIndex, upgrade);
         }
+
         return true;
     }
 
