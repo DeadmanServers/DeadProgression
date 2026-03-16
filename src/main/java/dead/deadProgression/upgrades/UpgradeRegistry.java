@@ -28,16 +28,8 @@ public class UpgradeRegistry {
                     }
                     String ymlVar = "UpgradeData." + data;
 
-                    String abilityStringID = yml.getString(ymlVar + ".AbilityID");
-                    UUID abilityID;
-                    try {
-                        if (abilityStringID != null) {
-                            abilityID = UUID.fromString(abilityStringID);
-                        }
-                    } catch (Exception e) {
-                        DeadProgression.INSTANCE.getLogger().warning("Invalid ability ID: " + abilityStringID);
-                        continue;
-                    }
+                    String stringID = yml.getString(ymlVar + ".AbilityID");
+                    UUID abilityID = UUID.fromString(stringID);
                     String name = yml.getString(ymlVar + ".Name");
                     Map<Integer, Double> valuesPerTier = new HashMap<>();
                     Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
