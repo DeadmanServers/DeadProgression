@@ -1,7 +1,6 @@
 package dead.deadProgression.categories;
 
 import dead.deadProgression.DeadProgression;
-import org.bukkit.entity.Cat;
 import poa.poalib.yml.PoaYaml;
 
 import java.io.File;
@@ -25,10 +24,10 @@ public class CategoryRegistry {
                     if (exists(id)) {
                         continue;
                     }
-                    String ymlVar = "AbilityData." + data;
+                    String ymlVar = "CategoryData." + data;
                     String name = yml.getString(ymlVar + ".Name");
                     List<UUID> upgrades = new ArrayList<>();
-                    for (String key : yml.getConfigurationSection(ymlVar + ".Upgrades").getKeys(false)) {
+                    for (String key : yml.getStringList(ymlVar + ".Upgrades")) {
                         UUID upgradeID = UUID.fromString(key);
                         upgrades.add(upgradeID);
                     }
@@ -65,9 +64,9 @@ public class CategoryRegistry {
             } else {
                 yml.set(ymlVar + ".Upgrades", upgrades);
             }
-            yml.saveAsync(file);
             DeadProgression.INSTANCE.getLogger().info("Saved Category Data!");
         }
+        yml.saveAsync(file);
     }
 
     public void register(UUID id, String name, List<UUID> upgrades) {
