@@ -10,7 +10,7 @@ public class UpgradeData {
     private final UUID id;
     private UUID abilityID;
     private String name;
-    private List<Material> allowedItems;
+    private List<Material> allowedItems = new ArrayList<>();
     private Map<Integer, Double> valuesPerTier = new HashMap<>();
     private Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
 

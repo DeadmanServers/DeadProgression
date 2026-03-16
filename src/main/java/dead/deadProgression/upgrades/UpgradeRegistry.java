@@ -104,7 +104,11 @@ public class UpgradeRegistry {
             if (materials == null) {
                 yml.set(ymlVar + ".Materials", null);
             } else {
-                yml.set(ymlVar + ".Materials", materials.toString());
+                List<String> materialNames = new ArrayList<>();
+                for (Material material : materials) {
+                    materialNames.add(material.name());
+                }
+                yml.set(ymlVar + ".Materials", materialNames);
             }
             if (valuesPerTier != null && !valuesPerTier.isEmpty()) {
                 for (Integer i : valuesPerTier.keySet()) {
