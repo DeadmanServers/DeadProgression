@@ -43,13 +43,13 @@ public class UpgradeData {
         this.valuesPerTier = valuesPerTier;
     }
     public void addValuePerTier(int tier, double value) {
-        valuesPerTier.put(valuesPerTier.size(), value);
+        valuesPerTier.put(tier, value);
     }
     public void setValueForTier(int tier, double value) {
         valuesPerTier.put(tier, value);
     }
     public void clearLastValue() {
-        valuesPerTier.put(valuesPerTier.size() - 1, null);
+        valuesPerTier.remove(valuesPerTier.size() - 1);
     }
     public void setPricePerTier(Map<Integer, List<ItemStack>> pricePerTier) {
         this.pricePerTier = pricePerTier;
@@ -61,7 +61,7 @@ public class UpgradeData {
         pricePerTier.put(tier, items);
     }
     public void clearLastPrice() {
-        pricePerTier.put(pricePerTier.size() - 1, null);
+        pricePerTier.remove(pricePerTier.size() - 1);
     }
 
 }
