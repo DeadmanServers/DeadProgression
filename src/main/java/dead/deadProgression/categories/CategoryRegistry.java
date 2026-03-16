@@ -64,8 +64,8 @@ public class CategoryRegistry {
             } else {
                 yml.set(ymlVar + ".Upgrades", upgrades);
             }
-            DeadProgression.INSTANCE.getLogger().info("Saved Category Data!");
         }
+        DeadProgression.INSTANCE.getLogger().info("Completed Saving Category Data!");
         yml.saveAsync(file);
     }
 
