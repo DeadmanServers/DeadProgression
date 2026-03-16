@@ -1,5 +1,6 @@
 package dead.deadProgression.upgrades;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -9,6 +10,7 @@ public class UpgradeData {
     private final UUID id;
     private UUID abilityID;
     private String name;
+    private List<Material> allowedItems;
     private Map<Integer, Double> valuesPerTier = new HashMap<>();
     private Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
 
@@ -27,6 +29,9 @@ public class UpgradeData {
     public String getName() {
         return name;
     }
+    public List<Material> getAllowedItems() {
+        return allowedItems;
+    }
     public Map<Integer, Double> getValuesPerTier() {
         return valuesPerTier;
     }
@@ -38,6 +43,15 @@ public class UpgradeData {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public void setAllowedItems(List<Material> allowedItems) {
+        this.allowedItems = allowedItems;
+    }
+    public void addAllowedItem(Material material) {
+        this.allowedItems.add(material);
+    }
+    public void removeAllowedItem(Material material) {
+        this.allowedItems.remove(material);
     }
     public void setValuesPerTier(Map<Integer, Double> valuesPerTier) {
         this.valuesPerTier = valuesPerTier;

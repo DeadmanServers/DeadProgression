@@ -103,7 +103,7 @@ public class ProgressionRegistry {
     public void unregister(UUID id) {
         progressionData.remove(id);
     }
-    public void unregister(CategoryData data) {
+    public void unregister(ProgressionData data) {
         progressionData.remove(data.getId());
     }
 }

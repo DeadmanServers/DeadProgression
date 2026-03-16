@@ -2,6 +2,7 @@ package dead.deadProgression.upgrades;
 
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import poa.poalib.yml.PoaYaml;
 
@@ -31,8 +32,16 @@ public class UpgradeRegistry {
                     String stringID = yml.getString(ymlVar + ".AbilityID");
                     UUID abilityID = UUID.fromString(stringID);
                     String name = yml.getString(ymlVar + ".Name");
+                    List<Material> materials = new ArrayList<>();
                     Map<Integer, Double> valuesPerTier = new HashMap<>();
                     Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
+                    for (String stringMaterial : yml.getStringList(ymlVar + ".Materials")) {
+                        Material material = Material.getMaterial(stringMaterial);
+                        if (material == null) {
+                            continue;
+                        }
+                        materials.add(material);
+                    }
                     for (String key : yml.getConfigurationSection(ymlVar + ".ValuesPerTier").getKeys(false)) {
                         valuesPerTier.put(Integer.parseInt(key), yml.getDouble(ymlVar + ".ValuesPerTier." + key));
                     }
@@ -48,7 +57,7 @@ public class UpgradeRegistry {
                         pricePerTier.put(Integer.parseInt(key), priceList);
                     }
 
-                    register(id, abilityID, name, valuesPerTier, pricePerTier);
+                    register(id, abilityID, name, materials, valuesPerTier, pricePerTier);
                 } catch (Exception e) {
                     DeadProgression.INSTANCE.getLogger().warning("Failed to load Upgrade Data: " + data);
                     continue;
@@ -58,8 +67,9 @@ public class UpgradeRegistry {
         DeadProgression.INSTANCE.getLogger().info("Completed Loading Upgrade Data!");
     }
 
-    public void register(UUID upgradeID, UUID abilityID, String name, Map<Integer, Double> valuesPerTier, Map<Integer, List<ItemStack>> pricePerTier) {
+    public void register(UUID upgradeID, UUID abilityID, String name, List<Material> materials, Map<Integer, Double> valuesPerTier, Map<Integer, List<ItemStack>> pricePerTier) {
         UpgradeData data = new UpgradeData(upgradeID, abilityID, name);
+        data.setAllowedItems(materials);
         data.setValuesPerTier(valuesPerTier);
         data.setPricePerTier(pricePerTier);
         upgrades.put(upgradeID, data);
@@ -77,6 +87,7 @@ public class UpgradeRegistry {
             String ymlVar = "UpgradeData." + id;
             UUID abilityID = data.getAbilityID();
             String name = data.getName();
+            List<Material> materials = data.getAllowedItems();
             Map<Integer, Double> valuesPerTier = data.getValuesPerTier();
             Map<Integer, List<ItemStack>> pricePerTier = data.getPricePerTier();
 
@@ -89,6 +100,11 @@ public class UpgradeRegistry {
                 DeadProgression.INSTANCE.getLogger().warning("Failed to save AbilityID for Upgrade Data: " + id);
             } else {
                 yml.set(ymlVar + ".AbilityID", abilityID.toString());
+            }
+            if (materials == null) {
+                yml.set(ymlVar + ".Materials", null);
+            } else {
+                yml.set(ymlVar + ".Materials", materials.toString());
             }
             if (valuesPerTier != null && !valuesPerTier.isEmpty()) {
                 for (Integer i : valuesPerTier.keySet()) {
