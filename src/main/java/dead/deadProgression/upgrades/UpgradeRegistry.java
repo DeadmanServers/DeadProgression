@@ -10,7 +10,7 @@ import java.util.*;
 
 public class UpgradeRegistry {
 
-    public  Map<UUID, UpgradeData> upgrades = new HashMap<>();
+    private Map<UUID, UpgradeData> upgrades = new HashMap<>();
     private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/upgradedata.yml");
     {
         file.getParentFile().mkdirs();
@@ -74,7 +74,7 @@ public class UpgradeRegistry {
                 continue;
             }
 
-            String ymlVar = "UpgradeData." + data;
+            String ymlVar = "UpgradeData." + id;
             UUID abilityID = data.getAbilityID();
             String name = data.getName();
             Map<Integer, Double> valuesPerTier = data.getValuesPerTier();
@@ -90,13 +90,13 @@ public class UpgradeRegistry {
             } else {
                 yml.set(ymlVar + ".AbilityID", abilityID.toString());
             }
-            if (valuesPerTier != null || !valuesPerTier.isEmpty()) {
+            if (valuesPerTier != null && !valuesPerTier.isEmpty()) {
                 for (Integer i : valuesPerTier.keySet()) {
                     double value = valuesPerTier.get(i);
                     yml.set(ymlVar + ".ValuesPerTier." + i, value);
                 }
             }
-            if (pricePerTier != null || !pricePerTier.isEmpty()) {
+            if (pricePerTier != null && !pricePerTier.isEmpty()) {
                 for (Integer i : pricePerTier.keySet()) {
                     List<ItemStack> price = pricePerTier.get(i);
                     int counter = 1;
