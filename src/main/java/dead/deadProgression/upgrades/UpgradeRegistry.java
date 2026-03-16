@@ -10,12 +10,12 @@ import java.util.*;
 
 public class UpgradeRegistry {
 
-    public static Map<UUID, UpgradeData> upgrades = new HashMap<>();
-    private static final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/upgradedata.yml");
+    public  Map<UUID, UpgradeData> upgrades = new HashMap<>();
+    private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/upgradedata.yml");
     {
-        file.mkdirs();
+        file.getParentFile().mkdirs();
     }
-    private static final PoaYaml yml = PoaYaml.loadFromFile(file, true);
+    private final PoaYaml yml = PoaYaml.loadFromFile(file, true);
 
     public void load() {
         DeadProgression.INSTANCE.getLogger().info("Loading Upgrade Data...");
@@ -28,8 +28,17 @@ public class UpgradeRegistry {
                     }
                     String ymlVar = "UpgradeData." + data;
 
-                    UUID abilityID = UUID.fromString(ymlVar + ".AbilityID");
-                    String name = ymlVar + ".Name";
+                    String abilityStringID = yml.getString(ymlVar + ".AbilityID");
+                    UUID abilityID;
+                    try {
+                        if (abilityStringID != null) {
+                            abilityID = UUID.fromString(abilityStringID);
+                        }
+                    } catch (Exception e) {
+                        DeadProgression.INSTANCE.getLogger().warning("Invalid ability ID: " + abilityStringID);
+                        continue;
+                    }
+                    String name = yml.getString(ymlVar + ".Name");
                     Map<Integer, Double> valuesPerTier = new HashMap<>();
                     Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
                     for (String key : yml.getConfigurationSection(ymlVar + ".ValuesPerTier").getKeys(false)) {
