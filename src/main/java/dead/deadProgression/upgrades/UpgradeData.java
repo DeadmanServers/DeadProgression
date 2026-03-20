@@ -11,6 +11,7 @@ public class UpgradeData {
     private UUID abilityID;
     private String name;
     private List<Material> allowedItems = new ArrayList<>();
+    // TODO add support for tags (E.G "Tag.ITEMS_SWORDS) in addition to the allowedItems material list.
     private Map<Integer, Double> valuesPerTier = new HashMap<>();
     private Map<Integer, List<ItemStack>> pricePerTier = new HashMap<>();
 
