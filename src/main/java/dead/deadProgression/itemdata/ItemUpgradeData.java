@@ -68,12 +68,78 @@ public class ItemUpgradeData {
         return upgradeData;
     }
 
-    public boolean serialize() {
+    public String serialize() {
 
+        StringBuilder builder = new StringBuilder();
+        for (UUID uuid : upgradeData.keySet()) {
+            builder.append(uuid.toString());
+            builder.append("[");
+            boolean isFirst = true;
+            for (Map.Entry<UUID, Integer> entry : upgradeData.get(uuid).entrySet()) {
+                if (!isFirst) {
+                    builder.append(",");
+                }
+                builder.append(entry.getKey().toString());
+                builder.append("=");
+                builder.append(entry.getValue());
+                isFirst = false;
+            }
+            builder.append("]");
+        }
+        return builder.toString();
     }
 
+    // ProgressionSetUUID[UpgradeUUID=Tier,UpgradeUUID=Tier]ProgressionSetUUID[UpgradeUUID=tier]
     public static ItemUpgradeData deserialize(String persistentDataString) {
 
+        if (persistentDataString == null || persistentDataString.isEmpty()) {
+            return null;
+        }
+
+        Map<UUID, Map<UUID, Integer>> upgradeData = new HashMap<>();
+
+        String[] progressionSets = persistentDataString.split("]");
+        for (String progressionSet : progressionSets) {
+            if (progressionSet == null || progressionSet.isEmpty()) {
+                continue;
+            }
+            int open =  progressionSet.indexOf('[');
+            if (open == -1) {
+                continue;
+            }
+            String setStringID = progressionSet.substring(0, open).trim();
+            String upgradeString = progressionSet.substring(open + 1).trim();
+            try {
+                UUID setUUID = UUID.fromString(setStringID);
+                Map<UUID, Integer> upgradeMap = new HashMap<>();
+                if (upgradeString.isBlank()) {
+                    continue;
+                }
+                String[] upgradeStrings = upgradeString.split(",");
+                for (String upgrade : upgradeStrings) {
+                    if (upgrade.isBlank()) {
+                        continue;
+                    }
+                    String[] upgradeWithTier = upgrade.split("=", 2);
+                    if (upgradeWithTier.length != 2) {
+                        continue;
+                    }
+
+                    try {
+                        UUID upgradeUUID = UUID.fromString(upgradeWithTier[0].trim());
+                        int tier = Integer.parseInt(upgradeWithTier[1].trim());
+                        upgradeMap.put(upgradeUUID, tier);
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+
+                }
+                upgradeData.put(setUUID, upgradeMap);
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+        }
+        return new ItemUpgradeData(upgradeData);
     }
 
 
