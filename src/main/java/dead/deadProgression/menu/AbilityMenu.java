@@ -6,6 +6,7 @@ import dead.deadProgression.ability.AbilityRegistry;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,12 +19,11 @@ import java.util.UUID;
 
 public class AbilityMenu extends Menu {
 
-    public Inventory inventory;
     private int page = 0;
 
     @Override
     public Inventory build() {
-        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("&8Ability Menu"));
+        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Menu"));
 
         AbilityRegistry registry = DeadProgression.abilityRegistry;
         List<AbilityData> all = registry.getAll();
@@ -31,9 +31,9 @@ public class AbilityMenu extends Menu {
         inventory.setItem(18, back);
         inventory.setItem(26, next);
 
-        int index = (page * 44);
+        int index = (page * 18);
 
-        for (int slot = 0; slot < 45; slot++) {
+        for (int slot = 0; slot < 19; slot++) {
             if (all.size() <= index) {
                 inventory.setItem(slot, placeholder);
                 continue;
@@ -61,5 +61,19 @@ public class AbilityMenu extends Menu {
     @Override
     public void handleClick(InventoryClickEvent event) {
 
+        if (event.getCurrentItem() == null) {
+            return;
+        }
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        ItemStack item = event.getCurrentItem();
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+        ItemStack clone = item.clone();
+        String id = NBT.get(clone, nbt ->{
+            return nbt.getString("ID");
+        });
+        player.sendRichMessage("<green>" + id);
     }
 }

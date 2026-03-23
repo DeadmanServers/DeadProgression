@@ -5,6 +5,7 @@ import dead.deadProgression.ability.AbilityData;
 import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.itemdata.ItemUpgradeData;
+import dead.deadProgression.menu.AbilityMenu;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -198,6 +199,9 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                 }
                 String serialize = itemUpgradeData.serialize();
                 player.sendRichMessage(serialize);
+            }
+            case "abilitymenu" -> {
+                new AbilityMenu().open(player);
             }
         }
 

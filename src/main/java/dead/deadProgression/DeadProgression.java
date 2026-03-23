@@ -3,8 +3,10 @@ package dead.deadProgression;
 import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.categories.CategoryRegistry;
 import dead.deadProgression.commands.ProgressionDebugCommand;
+import dead.deadProgression.menu.MenuListener;
 import dead.deadProgression.progression.ProgressionRegistry;
 import dead.deadProgression.upgrades.UpgradeRegistry;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DeadProgression extends JavaPlugin {
@@ -30,6 +32,8 @@ public final class DeadProgression extends JavaPlugin {
         progressionRegistry.load();
 
         getCommand("upgradedebug").setExecutor(new ProgressionDebugCommand());
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new MenuListener(), this);
 
     }
 

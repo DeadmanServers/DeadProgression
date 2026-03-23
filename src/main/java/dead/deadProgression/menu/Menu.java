@@ -21,15 +21,15 @@ public abstract class Menu implements InventoryHolder {
         player.openInventory(build());
     }
 
-    public static ItemStack next = CreateItem.createItem(Material.ARROW, "&a&lNext");
-    public static ItemStack back = CreateItem.createItem(Material.ARROW, "&c&lBack");
-    public static ItemStack close = CreateItem.createItem(Material.BARRIER, "&c&lClose");
-    public static ItemStack placeholder = CreateItem.createItem(Material.PAPER, "&a&lPlaceholder");
+    public static ItemStack next = CreateItem.createItem(Material.ARROW, "<green><bold>Next");
+    public static ItemStack back = CreateItem.createItem(Material.ARROW, "<red><bold>Back");
+    public static ItemStack close = CreateItem.createItem(Material.BARRIER, "<red><bold>Close");
+    public static ItemStack placeholder = CreateItem.createItem(Material.PAPER, "<green><bold>Placeholder");
     public static ItemStack empty = CreateItem.blackGlass();
-    public static ItemStack brokenData =  CreateItem.createItem(Material.BARRIER, "&c&lBROKEN DATA");
+    public static ItemStack brokenData =  CreateItem.createItem(Material.BARRIER, "<red><bold>BROKEN DATA");
 
     @Override
     public @NotNull Inventory getInventory() {
-        return null;
+        return inventory;
     }
 }
