@@ -1,7 +1,12 @@
 package dead.deadProgression.itemdata;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import dead.deadProgression.DeadProgression;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +24,7 @@ public class ItemUpgradeData {
  */
 
     private Map<UUID, Map<UUID, Integer>> upgradeData = new HashMap<>();
+    private static final NamespacedKey KEY = new NamespacedKey(DeadProgression.INSTANCE, "upgrade_data");
 
 
     public ItemUpgradeData(Map<UUID, Map<UUID, Integer>> upgradeData) {
@@ -140,6 +146,38 @@ public class ItemUpgradeData {
             }
         }
         return new ItemUpgradeData(upgradeData);
+    }
+
+
+    public static ItemUpgradeData fromItem(ItemStack item) {
+        ItemStack clone = item.clone();
+        if (clone.getType() == Material.AIR || clone.isEmpty()) {
+            return null;
+        }
+        ItemMeta itemMeta = clone.getItemMeta();
+        if (itemMeta == null) {
+            return null;
+        }
+        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+        String pdcString = pdc.get(KEY, PersistentDataType.STRING);
+        if (pdcString == null || pdcString.isEmpty()) {
+            return null;
+        }
+        return deserialize(pdcString);
+    }
+
+    public static void applyToItem(ItemStack item, ItemUpgradeData data) {
+        ItemStack clone = item.clone();
+        if (clone.getType() == Material.AIR || clone.isEmpty()) {
+            return;
+        }
+        ItemMeta itemMeta = clone.getItemMeta();
+        if (itemMeta == null) {
+            return;
+        }
+        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+        pdc.set(KEY, PersistentDataType.STRING, data.serialize());
+        item.setItemMeta(itemMeta);
     }
 
 
