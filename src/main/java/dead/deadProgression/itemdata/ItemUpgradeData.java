@@ -167,11 +167,10 @@ public class ItemUpgradeData {
     }
 
     public static void applyToItem(ItemStack item, ItemUpgradeData data) {
-        ItemStack clone = item.clone();
-        if (clone.getType() == Material.AIR || clone.isEmpty()) {
+        if (item.getType() == Material.AIR || item.isEmpty()) {
             return;
         }
-        ItemMeta itemMeta = clone.getItemMeta();
+        ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) {
             return;
         }

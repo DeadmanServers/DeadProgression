@@ -4,11 +4,14 @@ import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
 import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.ability.AbilityType;
+import dead.deadProgression.itemdata.ItemUpgradeData;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,6 +168,40 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                 String joined = String.join(" ", strings);
                 abilityData.addDescription(joined);
             }
+            case "testwritepdc" -> {
+                ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+                ItemStack clone = itemInMainHand.clone();
+                if (clone.getType() == Material.AIR || clone.isEmpty()) {
+                    player.sendRichMessage("<red>ERROR: <yellow>You need to hold a valid item.");
+                    return true;
+                }
+                ItemUpgradeData itemUpgradeData = ItemUpgradeData.fromItem(clone);
+                if (itemUpgradeData == null) {
+                    player.sendRichMessage("<red>ERROR: <yellow>Failed to load upgrade data.");
+                    return true;
+                }
+                UUID randomProgressionUUID = UUID.randomUUID();
+                UUID randomUpgradeUUID = UUID.randomUUID();
+                int tier = 2;
+
+                itemUpgradeData.addOrCreate(randomProgressionUUID, randomUpgradeUUID, tier);
+                ItemUpgradeData.applyToItem(itemInMainHand, itemUpgradeData);
+                player.sendRichMessage("<green>You have successfully created an upgrade item.");
+            }
+            case "testreadpdc" -> {
+                ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+                ItemStack clone = itemInMainHand.clone();
+                if (clone.getType() == Material.AIR || clone.isEmpty()) {
+                    player.sendRichMessage("<red>ERROR: <yellow>You need to hold a valid item.");
+                    return true;
+                }
+                ItemUpgradeData itemUpgradeData = ItemUpgradeData.fromItem(clone);
+                if (itemUpgradeData == null) {
+                    player.sendRichMessage("<red>ERROR: <yellow>Failed to load upgrade data.");
+                    return true;
+                }
+                ItemUpgradeData.deserialize(itemUpgradeData.toString());
+            }
         }
 
         return false;
@@ -179,7 +216,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
         AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
 
         if (args.length == 1) {
-            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription"));
+            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc"));
         }
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
