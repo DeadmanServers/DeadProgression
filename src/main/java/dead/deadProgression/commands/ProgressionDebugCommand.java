@@ -15,10 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /*
     Create ability
@@ -177,8 +174,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                 }
                 ItemUpgradeData itemUpgradeData = ItemUpgradeData.fromItem(clone);
                 if (itemUpgradeData == null) {
-                    player.sendRichMessage("<red>ERROR: <yellow>Failed to load upgrade data.");
-                    return true;
+                    itemUpgradeData = new ItemUpgradeData(new HashMap<>());
                 }
                 UUID randomProgressionUUID = UUID.randomUUID();
                 UUID randomUpgradeUUID = UUID.randomUUID();
@@ -200,7 +196,8 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                     player.sendRichMessage("<red>ERROR: <yellow>Failed to load upgrade data.");
                     return true;
                 }
-                ItemUpgradeData.deserialize(itemUpgradeData.toString());
+                String serialize = itemUpgradeData.serialize();
+                player.sendRichMessage(serialize);
             }
         }
 
