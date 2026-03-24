@@ -6,6 +6,7 @@ import dead.deadProgression.ability.AbilityRegistry;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import poa.poalib.items.CreateItem;
@@ -17,6 +18,14 @@ import java.util.UUID;
 public class AbilityEditorMenu extends Menu {
 
     private UUID abilityDataID;
+    private int previousPage = 0;
+
+    public int getPreviousPage() {
+        return previousPage;
+    }
+    public void setPreviousPage(int previousPage) {
+        this.previousPage = previousPage;
+    }
 
     public UUID getAbilityDataID() {
         return abilityDataID;
@@ -63,11 +72,24 @@ public class AbilityEditorMenu extends Menu {
 
         inv.setItem(0, CreateItem.createItem(Material.OAK_SIGN, "<green><bold>Change Ability's Name", renameLore()));
 
+        inv.setItem(18, back);
+
         return inv;
     }
 
     @Override
     public void handleClick(InventoryClickEvent event) {
+
+        if (event.getCurrentItem() == null) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+
+        switch (event.getRawSlot()) {
+            case 18:
+                AbilityMenu abilityMenu = new AbilityMenu();
+                abilityMenu.setPage(previousPage);
+                abilityMenu.open(player);
+        }
+
 
     }
 }

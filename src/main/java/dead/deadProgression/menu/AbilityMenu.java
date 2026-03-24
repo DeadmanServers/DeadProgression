@@ -13,13 +13,19 @@ import org.bukkit.inventory.ItemStack;
 import poa.poalib.items.CreateItem;
 import poa.poalib.shaded.NBT;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class AbilityMenu extends Menu {
 
     private int page = 0;
+
+    public int getPage() {
+        return page;
+    }
+    public void setPage(int page) {
+        this.page = page;
+    }
 
     @Override
     public Inventory build() {
@@ -84,16 +90,24 @@ public class AbilityMenu extends Menu {
             return;
         }
         ItemStack clone = item.clone();
-        String id = NBT.get(clone, nbt ->{
+        String idString = NBT.get(clone, nbt ->{
             return nbt.getString("ID");
         });
+        UUID id;
+        try {
+            id = UUID.fromString(idString);
+        } catch (IllegalArgumentException e) {
+            player.sendRichMessage("<red><bold>ERROR: <yellow>Failed to parse ID.");
+            return;
+        }
         AbilityData data = abilityRegistry.get(id);
-        if (data.getId() == null) {
+        if (data == null) {
             player.sendRichMessage("<red><bold>ERROR: <yellow>That ability does not exist.");
             return;
         }
         AbilityEditorMenu abilityEditorMenu = new AbilityEditorMenu();
         abilityEditorMenu.setAbilityData(data);
+        abilityEditorMenu.setPreviousPage(page);
         abilityEditorMenu.open(player);
     }
 }
