@@ -19,8 +19,9 @@ public class ChatInputListener implements Listener {
         String message = e.getMessage();
         switch (message) {
             case "cancel":
+                String cancelMessage = ChatInputManager.getCancelMessage(id);
                 ChatInputManager.cancel(id);
-                player.sendRichMessage("<red>You have cancelled ");
+                player.sendRichMessage(cancelMessage);
                 return;
         }
     }

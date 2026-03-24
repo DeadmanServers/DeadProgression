@@ -7,21 +7,22 @@ import java.util.function.Consumer;
 
 public class ChatInputManager {
 
-    private static final Map<UUID, Consumer<String>> pendingInput = new HashMap<>();
+    private static final Map<UUID, PendingInput> pendingMap = new HashMap<>();
 
-    public static void awaitInput(UUID uuid, Consumer<String> consumer) {
-        pendingInput.put(uuid, consumer);
+    public static void awaitInput(UUID uuid, PendingInput pendingInput) {
+        pendingMap.put(uuid, pendingInput);
     }
 
     public static boolean isAwaiting(UUID uuid) {
-        return pendingInput.containsKey(uuid);
+        return pendingMap.containsKey(uuid);
     }
 
     public static boolean complete(UUID uuid, String input) {
         try {
-            Consumer<String> stringConsumer = pendingInput.get(uuid);
-            pendingInput.remove(uuid);
-            stringConsumer.accept(input);
+            PendingInput pendingInput = pendingMap.get(uuid);
+            Consumer<String> action = pendingInput.getAction();
+            pendingMap.remove(uuid);
+            action.accept(input);
             return true;
         } catch (Exception e) {
             return false;
@@ -29,7 +30,15 @@ public class ChatInputManager {
     }
 
     public static void cancel(UUID uuid) {
-        pendingInput.remove(uuid);
+        pendingMap.remove(uuid);
+    }
+
+    public static String getCancelMessage(UUID uuid) {
+        PendingInput pendingInput = pendingMap.get(uuid);
+        if (pendingInput == null) {
+            return "There is no pending input";
+        }
+        return pendingInput.getCancelMessage();
     }
 
 
