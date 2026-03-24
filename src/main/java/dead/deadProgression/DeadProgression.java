@@ -2,6 +2,7 @@ package dead.deadProgression;
 
 import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.categories.CategoryRegistry;
+import dead.deadProgression.chatinputmanager.ChatInputListener;
 import dead.deadProgression.commands.ProgressionDebugCommand;
 import dead.deadProgression.menu.MenuListener;
 import dead.deadProgression.progression.ProgressionRegistry;
@@ -34,6 +35,7 @@ public final class DeadProgression extends JavaPlugin {
         getCommand("upgradedebug").setExecutor(new ProgressionDebugCommand());
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new MenuListener(), this);
+        pm.registerEvents(new ChatInputListener(), this);
 
     }
 
