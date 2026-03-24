@@ -23,7 +23,7 @@ public class AbilityMenu extends Menu {
 
     @Override
     public Inventory build() {
-        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Menu"));
+        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Menu -- <gray>Page: " + page));
 
         AbilityRegistry registry = DeadProgression.abilityRegistry;
         List<AbilityData> all = registry.getAll();
@@ -33,7 +33,7 @@ public class AbilityMenu extends Menu {
 
         int index = (page * 18);
 
-        for (int slot = 0; slot < 19; slot++) {
+        for (int slot = 0; slot < 18; slot++) {
             if (all.size() <= index) {
                 inventory.setItem(slot, placeholder);
                 continue;
@@ -66,6 +66,19 @@ public class AbilityMenu extends Menu {
         }
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
+        switch (event.getRawSlot()) {
+            case 18 -> {
+                page--;
+                open(player);
+                return;
+            }
+            case 26 -> {
+                page++;
+                open(player);
+                return;
+            }
+        }
+
         ItemStack item = event.getCurrentItem();
         if (item == null || item.getType() == Material.AIR) {
             return;
@@ -74,6 +87,13 @@ public class AbilityMenu extends Menu {
         String id = NBT.get(clone, nbt ->{
             return nbt.getString("ID");
         });
-        player.sendRichMessage("<green>" + id);
+        AbilityData data = abilityRegistry.get(id);
+        if (data.getId() == null) {
+            player.sendRichMessage("<red><bold>ERROR: <yellow>That ability does not exist.");
+            return;
+        }
+        AbilityEditorMenu abilityEditorMenu = new AbilityEditorMenu();
+        abilityEditorMenu.setAbilityData(data);
+        abilityEditorMenu.open(player);
     }
 }

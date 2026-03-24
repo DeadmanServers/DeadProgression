@@ -164,7 +164,11 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             case "adddescription" -> {
                 @NotNull String[] strings = Arrays.copyOfRange(args, 2, args.length);
                 String joined = String.join(" ", strings);
-                abilityData.addDescription(joined);
+                if (!abilityData.addDescription(joined)) {
+                    player.sendRichMessage("<red>ERROR: <yellow>That is not a valid description.");
+                    return true;
+                }
+                player.sendRichMessage("<green>SUCCESS: <white>You have added a line in the description for <green>" + abilityData.getName());
             }
             case "testwritepdc" -> {
                 ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
@@ -217,7 +221,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
         AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
 
         if (args.length == 1) {
-            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc"));
+            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc", "abilitymenu"));
         }
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {

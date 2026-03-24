@@ -35,7 +35,7 @@ public class AbilityData {
         return type;
     }
     public boolean setName(String name) {
-        if (!name.matches("^[a-zA-Z0-9\\s]+$")) {
+        if (!name.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
             return false;
         }
         name = name.trim();
@@ -55,7 +55,7 @@ public class AbilityData {
     }
     public boolean setDescription(List<String> description) {
         for (String s : description) {
-            if (!s.matches("^[a-zA-Z0-9\\s]+$")) {
+            if (!s.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
                 return false;
             }
         }
@@ -76,7 +76,7 @@ public class AbilityData {
         this.description.clear();
     }
     public boolean addDescription(String description) {
-        if (!description.matches("^[a-zA-Z0-9\\s]+$")) {
+        if (!description.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
             return false;
         }
         this.description.add(description);
