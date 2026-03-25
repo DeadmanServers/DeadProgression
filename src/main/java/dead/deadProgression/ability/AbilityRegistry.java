@@ -60,28 +60,42 @@ public class AbilityRegistry {
                 DeadProgression.INSTANCE.getLogger().warning("Ability Data id not found! " + id);
                 continue;
             }
-
-            String ymlVar = "AbilityData." + id;
-            String name = data.getName();
-            AbilityType type = data.getType();
-            List<String> description = data.getDescription();
-            double value = data.getValue();
-
-            if (name == null) {
-                DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! This ability may not load properly. " + id);
-            } else {
-                yml.set(ymlVar + ".Name", name);
-            }
-            if (type == null) {
-                DeadProgression.INSTANCE.getLogger().warning("AbilityData type not found! Disabling this ability." + id);
-                type = AbilityType.NO_VALUE;
-            }
-            yml.set(ymlVar + ".Type", type.toString());
-            yml.set(ymlVar + ".Description", description);
-            yml.set(ymlVar + ".Value", value);
+            save(id, false);
         }
         yml.saveAsync(file);
         DeadProgression.INSTANCE.getLogger().info("Completed Saving AbilityData!");
+    }
+
+    public void save(UUID id, boolean saveNow) {
+        AbilityData data = abilityData.get(id);
+        if (data == null) {
+            DeadProgression.INSTANCE.getLogger().warning("Ability Data id not found! " + id);
+            return;
+        }
+        String ymlVar = "AbilityData." + id;
+        String name = data.getName();
+        AbilityType type = data.getType();
+        List<String> description = data.getDescription();
+        double value = data.getValue();
+
+        if (name == null) {
+            DeadProgression.INSTANCE.getLogger().warning("AbilityData name not found! " + id);
+        } else {
+            yml.set(ymlVar + ".Name", name);
+        }
+        if (type == null) {
+            DeadProgression.INSTANCE.getLogger().warning("AbilityData type not found! " + id);
+            type = AbilityType.NO_VALUE;
+        }
+        yml.set(ymlVar + ".Type", type.toString());
+        yml.set(ymlVar + ".Description", description);
+        yml.set(ymlVar + ".Value", value);
+
+        if (saveNow) yml.saveAsync(file);
+    }
+
+    public void save(UUID id) {
+        save(id, true);
     }
 
     public void register(UUID id, AbilityData abilityData) {

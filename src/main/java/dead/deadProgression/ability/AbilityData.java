@@ -1,9 +1,13 @@
 package dead.deadProgression.ability;
 
+import dead.deadProgression.DeadProgression;
+
 import java.util.List;
 import java.util.UUID;
 
 public class AbilityData {
+
+    private static final AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
 
     private final UUID id;
     private String name;
@@ -40,10 +44,12 @@ public class AbilityData {
         }
         name = name.trim();
         this.name = name;
+        abilityRegistry.save(id);
         return true;
     }
     public void setType(AbilityType type) {
         this.type = type;
+        abilityRegistry.save(id);
     }
     public boolean setType(String type) {
         AbilityType abilityType = AbilityType.valueOf(type);
@@ -51,6 +57,7 @@ public class AbilityData {
             return false;
         }
         setType(abilityType);
+        abilityRegistry.save(id);
         return true;
     }
     public boolean setDescription(List<String> description) {
@@ -60,31 +67,35 @@ public class AbilityData {
             }
         }
         this.description = description;
+        abilityRegistry.save(id);
         return true;
     }
     public void removeDescription(int descriptionLine) {
         if (!description.isEmpty()) {
             this.description.set(descriptionLine, null);
+            abilityRegistry.save(id);
         }
     }
     public void removeDescription(String description) {
         if (!description.isEmpty()) {
             this.description.remove(description);
+            abilityRegistry.save(id);
         }
     }
     public void clearDescription() {
         this.description.clear();
+        abilityRegistry.save(id);
     }
     public boolean addDescription(String description) {
         if (!description.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
             return false;
         }
         this.description.add(description);
+        abilityRegistry.save(id);
         return true;
     }
     public void setValue(double value) {
         this.value = value;
+        abilityRegistry.save(id);
     }
-
-
 }

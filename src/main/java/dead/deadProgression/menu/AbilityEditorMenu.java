@@ -95,21 +95,16 @@ public class AbilityEditorMenu extends Menu {
                 if (ChatInputManager.isAwaiting(id)) {
                     ChatInputManager.cancel(id);
                 }
-                Consumer<String> consumer = new Consumer<String>() {
-                    @Override
-                    public void accept(String s) {
-                        AbilityData abilityData = abilityRegistry.get(abilityDataID);
-                        if (abilityData == null) {
-                            return;
-                        }
-                        abilityData.setName(s);
-                    }
+                Consumer<String> consumer = s -> {
+                    abilityData.setName(s);
+                    player.sendRichMessage("<green><bold>Success! <white>You have set the new name to: " + s);
                 };
 
                 PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability name.");
+                ChatInputManager.awaitInput(id, input);
                 player.closeInventory();
                 player.sendRichMessage("");
-                player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability <orange>" + abilityData.getName());
+                player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability " + abilityData.getName());
                 return;
             case 18:
                 AbilityMenu abilityMenu = new AbilityMenu();
