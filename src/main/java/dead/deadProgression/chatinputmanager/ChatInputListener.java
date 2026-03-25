@@ -1,5 +1,6 @@
 package dead.deadProgression.chatinputmanager;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +22,7 @@ public class ChatInputListener implements Listener {
         if (message.equalsIgnoreCase("cancel")) {
             String cancelMessage = ChatInputManager.getCancelMessage(id);
             ChatInputManager.cancel(id);
-            player.sendMessage(cancelMessage);
+            player.sendMessage(MiniMessage.miniMessage().deserialize(cancelMessage));
         } else {
             ChatInputManager.complete(id, message);
         }
