@@ -2,15 +2,15 @@ package dead.deadProgression.chatinputmanager;
 
 import dead.deadProgression.DeadProgression;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class ChatInputManager {
 
-    private static final Map<UUID, PendingInput> pendingMap = new HashMap<>();
+    private static final Map<UUID, PendingInput> pendingMap = new ConcurrentHashMap<>();
 
     public static void awaitInput(UUID uuid, PendingInput pendingInput) {
         pendingMap.put(uuid, pendingInput);

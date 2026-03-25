@@ -1,20 +1,21 @@
-package dead.deadProgression.menu;
+package dead.deadProgression.menu.abilitymenus;
 
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
 import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.chatinputmanager.ChatInputManager;
 import dead.deadProgression.chatinputmanager.PendingInput;
+import dead.deadProgression.menu.Menu;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.checkerframework.checker.units.qual.A;
 import poa.poalib.items.CreateItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -136,10 +137,15 @@ public class AbilityEditorMenu extends Menu {
         switch (event.getRawSlot()) {
             case 0 -> {
                 Consumer<String> consumer = s -> {
+                    if (!abilityData.setName(s)) {
+                        player.sendMessage("<red><b>ERROR: </b> <yellow>Invalid ability name!");
+                        return;
+                    }
                     abilityData.setName(s);
                     player.sendRichMessage("<green><bold>Success!</b> <white>You have set the new name to: " + s);
-                    build();
-                    open(player);
+                    Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, () -> {
+                        open(player);
+                    });
                 };
 
                 PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability name.");
@@ -148,6 +154,12 @@ public class AbilityEditorMenu extends Menu {
                 player.sendRichMessage("");
                 player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability " + name);
             }
+            case 1 -> {
+                AbilityDescriptionMenu menu = new AbilityDescriptionMenu();
+                menu.setAbilityDataID(abilityDataID);
+                menu.setPreviousPageHolder(previousPage);
+                menu.open(player);
+            }
             case 2 -> {
                 Consumer<String> consumer = s -> {
                     AbilityType type;
@@ -155,8 +167,9 @@ public class AbilityEditorMenu extends Menu {
                         type = AbilityType.valueOf(s.trim());
                         abilityData.setType(type);
                         player.sendRichMessage("<green><b>Success!</b> <white>You have set the new type to: " + type);
-                        build();
-                        open(player);
+                        Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, () -> {
+                            open(player);
+                        });
                     } catch (IllegalArgumentException e) {
                         player.sendRichMessage("<red>Invalid ability type: <white>" + s);
                     }
@@ -174,8 +187,9 @@ public class AbilityEditorMenu extends Menu {
                         double value = Double.parseDouble(s.trim());
                         abilityData.setValue(value);
                         player.sendRichMessage("<green><b>Success!</b> <white>You have set the new value to: " + value);
-                        build();
-                        open(player);
+                        Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, () -> {
+                            open(player);
+                        });
                     } catch (NumberFormatException e) {
                         player.sendRichMessage("<red>Invalid ability value: <white>" + s);
                     }
