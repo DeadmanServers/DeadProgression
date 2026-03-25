@@ -27,6 +27,7 @@ public class AbilityEditorMenu extends Menu {
     public int getPreviousPage() {
         return previousPage;
     }
+
     public void setPreviousPage(int previousPage) {
         this.previousPage = previousPage;
     }
@@ -34,9 +35,11 @@ public class AbilityEditorMenu extends Menu {
     public UUID getAbilityDataID() {
         return abilityDataID;
     }
+
     public void setAbilityData(AbilityData abilityData) {
         this.abilityDataID = abilityData.getId();
     }
+
     public void setAbilityDataID(String abilityDataID) {
         try {
             this.abilityDataID = UUID.fromString(abilityDataID);
@@ -44,6 +47,7 @@ public class AbilityEditorMenu extends Menu {
             DeadProgression.INSTANCE.getLogger().warning("Invalid ability data ID: " + abilityDataID);
         }
     }
+
     public void setAbilityDataID(UUID abilityDataID) {
         this.abilityDataID = abilityDataID;
     }
@@ -114,7 +118,12 @@ public class AbilityEditorMenu extends Menu {
 
         AbilityData abilityData = abilityRegistry.get(abilityDataID);
         if (abilityData == null) return;
+        String name = abilityData.getName();
 
+        UUID id = player.getUniqueId();
+        if (ChatInputManager.isAwaiting(id)) {
+            ChatInputManager.cancel(id);
+        }
 
         /*
 
@@ -125,26 +134,64 @@ public class AbilityEditorMenu extends Menu {
 
          */
         switch (event.getRawSlot()) {
-            case 0:
-                UUID id = player.getUniqueId();
-                if (ChatInputManager.isAwaiting(id)) {
-                    ChatInputManager.cancel(id);
-                }
+            case 0 -> {
                 Consumer<String> consumer = s -> {
                     abilityData.setName(s);
                     player.sendRichMessage("<green><bold>Success!</b> <white>You have set the new name to: " + s);
+                    build();
+                    open(player);
                 };
 
                 PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability name.");
                 ChatInputManager.awaitInput(id, input);
                 player.closeInventory();
                 player.sendRichMessage("");
-                player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability " + abilityData.getName());
-                return;
-            case 18:
+                player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability " + name);
+            }
+            case 2 -> {
+                Consumer<String> consumer = s -> {
+                    AbilityType type;
+                    try {
+                        type = AbilityType.valueOf(s.trim());
+                        abilityData.setType(type);
+                        player.sendRichMessage("<green><b>Success!</b> <white>You have set the new type to: " + type);
+                        build();
+                        open(player);
+                    } catch (IllegalArgumentException e) {
+                        player.sendRichMessage("<red>Invalid ability type: <white>" + s);
+                    }
+                };
+
+                PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability type.");
+                ChatInputManager.awaitInput(id, input);
+                player.closeInventory();
+                player.sendRichMessage("");
+                player.sendRichMessage("<green>Changing type: <white>Type a new ability type for the ability " + name);
+            }
+            case 3 -> {
+                Consumer<String> consumer = s -> {
+                    try {
+                        double value = Double.parseDouble(s.trim());
+                        abilityData.setValue(value);
+                        player.sendRichMessage("<green><b>Success!</b> <white>You have set the new value to: " + value);
+                        build();
+                        open(player);
+                    } catch (NumberFormatException e) {
+                        player.sendRichMessage("<red>Invalid ability value: <white>" + s);
+                    }
+                };
+
+                PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability value.");
+                ChatInputManager.awaitInput(id, input);
+                player.closeInventory();
+                player.sendRichMessage("");
+                player.sendRichMessage("<green>Changing value: <white>Type a new value for the ability " + name);
+            }
+            case 18 -> {
                 AbilityMenu abilityMenu = new AbilityMenu();
                 abilityMenu.setPage(previousPage);
                 abilityMenu.open(player);
+            }
         }
 
 

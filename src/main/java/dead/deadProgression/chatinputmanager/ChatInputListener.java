@@ -12,12 +12,12 @@ public class ChatInputListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
-        e.setCancelled(true);
         Player player = e.getPlayer();
         UUID id = player.getUniqueId();
         if (!ChatInputManager.isAwaiting(id)) {
             return;
         }
+        e.setCancelled(true);
         String message = e.getMessage();
         if (message.equalsIgnoreCase("cancel")) {
             String cancelMessage = ChatInputManager.getCancelMessage(id);
