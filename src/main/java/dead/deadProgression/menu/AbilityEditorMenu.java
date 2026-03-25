@@ -3,6 +3,8 @@ package dead.deadProgression.menu;
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
 import dead.deadProgression.ability.AbilityRegistry;
+import dead.deadProgression.chatinputmanager.ChatInputManager;
+import dead.deadProgression.chatinputmanager.PendingInput;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,6 +16,7 @@ import poa.poalib.items.CreateItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class AbilityEditorMenu extends Menu {
 
@@ -83,7 +86,31 @@ public class AbilityEditorMenu extends Menu {
         if (event.getCurrentItem() == null) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
+        AbilityData abilityData = abilityRegistry.get(abilityDataID);
+        if (abilityData == null) return;
+
         switch (event.getRawSlot()) {
+            case 0:
+                UUID id = player.getUniqueId();
+                if (ChatInputManager.isAwaiting(id)) {
+                    ChatInputManager.cancel(id);
+                }
+                Consumer<String> consumer = new Consumer<String>() {
+                    @Override
+                    public void accept(String s) {
+                        AbilityData abilityData = abilityRegistry.get(abilityDataID);
+                        if (abilityData == null) {
+                            return;
+                        }
+                        abilityData.setName(s);
+                    }
+                };
+
+                PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting the ability name.");
+                player.closeInventory();
+                player.sendRichMessage("");
+                player.sendRichMessage("<green>Changing name: <white>Type a new name for the ability <orange>" + abilityData.getName());
+                return;
             case 18:
                 AbilityMenu abilityMenu = new AbilityMenu();
                 abilityMenu.setPage(previousPage);

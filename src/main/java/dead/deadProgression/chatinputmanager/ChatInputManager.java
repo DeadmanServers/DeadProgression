@@ -1,9 +1,12 @@
 package dead.deadProgression.chatinputmanager;
 
+import dead.deadProgression.DeadProgression;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class ChatInputManager {
 
@@ -17,15 +20,14 @@ public class ChatInputManager {
         return pendingMap.containsKey(uuid);
     }
 
-    public static boolean complete(UUID uuid, String input) {
+    public static void complete(UUID uuid, String input) {
         try {
             PendingInput pendingInput = pendingMap.get(uuid);
             Consumer<String> action = pendingInput.getAction();
             pendingMap.remove(uuid);
             action.accept(input);
-            return true;
         } catch (Exception e) {
-            return false;
+            DeadProgression.INSTANCE.getLogger().log(Level.WARNING, "Error completing chat input");
         }
     }
 
