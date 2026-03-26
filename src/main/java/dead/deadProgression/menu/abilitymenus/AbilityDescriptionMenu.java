@@ -56,7 +56,7 @@ public class AbilityDescriptionMenu extends Menu {
 
         List<String> description = data.getDescription();
 
-        ItemStack freeSpace = placeholder;
+        ItemStack freeSpace = placeholder.clone();
         ItemMeta meta = freeSpace.getItemMeta();
         List<Component> freeSpaceLore = new ArrayList<>();
         freeSpaceLore.add(Component.text(""));
@@ -87,9 +87,9 @@ public class AbilityDescriptionMenu extends Menu {
                     ItemMeta iconMeta = icon.getItemMeta();
                     List<Component> iconLore = new ArrayList<>();
                     iconLore.add(Component.text(""));
-                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Left-Click: <green>Create new"));
-                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Middle-Click: <green>Add blank line"));
-                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Right-Click: <red>Remove line"));
+                    iconLore.add(MiniMessage.miniMessage().deserialize("<gray>Left-Click: <green>Create new"));
+                    iconLore.add(MiniMessage.miniMessage().deserialize("<gray>Middle-Click: <green>Add blank line"));
+                    iconLore.add(MiniMessage.miniMessage().deserialize("<gray>Right-Click: <red>Remove line"));
                     iconMeta.lore(iconLore);
 
                     inv.setItem(i, icon);

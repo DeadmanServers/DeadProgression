@@ -72,7 +72,7 @@ public class AbilityData {
     }
     public void removeDescription(int descriptionLine) {
         if (!description.isEmpty()) {
-            this.description.set(descriptionLine, null);
+            this.description.remove(descriptionLine);
             abilityRegistry.save(id);
         }
     }
