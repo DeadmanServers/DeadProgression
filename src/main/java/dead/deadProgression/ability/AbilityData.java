@@ -62,7 +62,7 @@ public class AbilityData {
     }
     public boolean setDescription(List<String> description) {
         for (String s : description) {
-            if (!s.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
+            if (!s.isBlank() && !s.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
                 return false;
             }
         }
@@ -87,7 +87,7 @@ public class AbilityData {
         abilityRegistry.save(id);
     }
     public boolean addDescription(String description) {
-        if (!description.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
+        if (!description.isBlank() && !description.matches("^[a-zA-Z0-9&\\-,\\.\\s]+$")) {
             return false;
         }
         this.description.add(description);

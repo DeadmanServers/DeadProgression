@@ -91,6 +91,7 @@ public class AbilityDescriptionMenu extends Menu {
                     iconLore.add(MiniMessage.miniMessage().deserialize("<gray>Middle-Click: <green>Add blank line"));
                     iconLore.add(MiniMessage.miniMessage().deserialize("<gray>Right-Click: <red>Remove line"));
                     iconMeta.lore(iconLore);
+                    icon.setItemMeta(iconMeta);
 
                     inv.setItem(i, icon);
                 }
