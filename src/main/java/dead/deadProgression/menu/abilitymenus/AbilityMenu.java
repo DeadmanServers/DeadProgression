@@ -1,8 +1,7 @@
 package dead.deadProgression.menu.abilitymenus;
 
-import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityRegistry;
+import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.menu.Menu;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -24,6 +23,7 @@ public class AbilityMenu extends Menu {
     public int getPage() {
         return page;
     }
+
     public void setPage(int page) {
         this.page = page;
     }
@@ -32,8 +32,7 @@ public class AbilityMenu extends Menu {
     public Inventory build() {
         this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Menu -- <gray>Page: " + page));
 
-        AbilityRegistry registry = DeadProgression.abilityRegistry;
-        List<AbilityData> all = registry.getAll();
+        List<AbilityData> all = abilityRegistry.getAll();
 
         inventory.setItem(18, back);
         inventory.setItem(26, next);
@@ -67,10 +66,10 @@ public class AbilityMenu extends Menu {
 
     @Override
     public void handleClick(InventoryClickEvent event) {
+        event.setCancelled(true);
+        ItemStack item = event.getCurrentItem();
 
-        if (event.getCurrentItem() == null) {
-            return;
-        }
+        if (item == null || item.getType() == Material.AIR) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
         switch (event.getRawSlot()) {
@@ -86,14 +85,30 @@ public class AbilityMenu extends Menu {
             }
         }
 
-        ItemStack item = event.getCurrentItem();
-        if (item == null || item.getType() == Material.AIR) {
-            return;
-        }
         ItemStack clone = item.clone();
-        String idString = NBT.get(clone, nbt ->{
+
+        if (isEmptyHolder(clone)) {
+            UUID newID = UUID.randomUUID();
+            try {
+                AbilityType abilityType = AbilityType.NO_VALUE;
+                double value = 0.0;
+                abilityRegistry.register(newID, new AbilityData(newID, "Blank Ability", abilityType, List.of(), value));
+                abilityRegistry.save(newID);
+                AbilityEditorMenu editorMenu = new AbilityEditorMenu();
+                editorMenu.setAbilityData(abilityRegistry.get(newID));
+                editorMenu.setPreviousPage(page);
+                editorMenu.open(player);
+                return;
+            } catch (Exception e) {
+                player.sendRichMessage("<red>ERROR: Failed to create a new ability.");
+                return;
+            }
+        }
+
+        String idString = NBT.get(clone, nbt -> {
             return nbt.getString("ID");
         });
+        if (idString == null || idString.isBlank()) return;
         UUID id;
         try {
             id = UUID.fromString(idString);
@@ -103,7 +118,7 @@ public class AbilityMenu extends Menu {
         }
         AbilityData data = abilityRegistry.get(id);
         if (data == null) {
-            player.sendRichMessage("<red><bold>ERROR: <yellow>That ability does not exist.");
+            player.sendRichMessage("<red><bold>ERROR: <yellow>That ability doesn't exist.");
             return;
         }
         AbilityEditorMenu abilityEditorMenu = new AbilityEditorMenu();

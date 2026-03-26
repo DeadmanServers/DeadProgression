@@ -113,7 +113,7 @@ public class AbilityEditorMenu extends Menu {
 
     @Override
     public void handleClick(InventoryClickEvent event) {
-
+        event.setCancelled(true);
         if (event.getCurrentItem() == null) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 

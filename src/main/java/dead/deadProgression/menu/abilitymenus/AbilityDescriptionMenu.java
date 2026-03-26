@@ -47,7 +47,7 @@ public class AbilityDescriptionMenu extends Menu {
     @Override
     public Inventory build() {
 
-        Inventory inv = Bukkit.createInventory(this, 27, "Ability Description Menu");
+        Inventory inv = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Description Menu"));
 
         AbilityData data = abilityRegistry.get(abilityDataID);
         if (data == null) {
@@ -112,6 +112,11 @@ public class AbilityDescriptionMenu extends Menu {
             return;
         }
 
+        ItemStack item = event.getCurrentItem();
+        if (item == null) {
+            return;
+        }
+
         AbilityData abilityData = abilityRegistry.get(abilityDataID);
         if (abilityData == null) {
             return;
@@ -131,11 +136,7 @@ public class AbilityDescriptionMenu extends Menu {
             return;
         }
 
-        ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null) {
-            return;
-        }
-        ItemStack clone = currentItem.clone();
+        ItemStack clone = item.clone();
 
         int descriptionID = NBT.get(clone, nbt -> {
             if (!nbt.hasTag("descriptionID")) {
@@ -180,7 +181,7 @@ public class AbilityDescriptionMenu extends Menu {
                 player.sendRichMessage("<green>Adding description: <white>Type out a line of text to add.");
                 return;
             }
-            if (click == ClickType.SHIFT_LEFT) {
+            if (click == ClickType.MIDDLE) {
                 data.addDescription(" ");
                 open(player);
             }
@@ -211,7 +212,7 @@ public class AbilityDescriptionMenu extends Menu {
                 ChatInputManager.awaitInput(player.getUniqueId(), input);
                 player.closeInventory();
                 player.sendRichMessage("");
-                player.sendRichMessage("<green>Chaning Description: <white>Type out a line of text.");
+                player.sendRichMessage("<green>Changing Description: <white>Type out a line of text.");
                 return;
             }
             if (click == ClickType.RIGHT) {

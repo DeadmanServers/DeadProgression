@@ -11,7 +11,7 @@ import java.util.*;
 
 public class UpgradeRegistry {
 
-    private Map<UUID, UpgradeData> upgrades = new HashMap<>();
+    private final Map<UUID, UpgradeData> upgrades = new HashMap<>();
     private final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/upgradedata.yml");
     {
         file.getParentFile().mkdirs();
@@ -134,6 +134,13 @@ public class UpgradeRegistry {
 
     public boolean exists(UUID id) {
         return upgrades.containsKey(id);
+    }
+
+    public UpgradeData get(UUID id) {
+        return upgrades.get(id);
+    }
+    public List<UpgradeData> getAll() {
+        return new ArrayList<>(upgrades.values());
     }
 
 }

@@ -6,6 +6,7 @@ import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.itemdata.ItemUpgradeData;
 import dead.deadProgression.menu.abilitymenus.AbilityMenu;
+import dead.deadProgression.menu.upgrademenus.UpgradeMenu;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -206,6 +207,11 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             }
             case "abilitymenu" -> {
                 new AbilityMenu().open(player);
+                return true;
+            }
+            case "upgrademenu"  -> {
+                new UpgradeMenu().open(player);
+                return true;
             }
         }
 
@@ -221,7 +227,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
         AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
 
         if (args.length == 1) {
-            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc", "abilitymenu"));
+            inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc", "abilitymenu", "upgrademenu"));
         }
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
