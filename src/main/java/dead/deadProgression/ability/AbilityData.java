@@ -94,6 +94,10 @@ public class AbilityData {
         abilityRegistry.save(id);
         return true;
     }
+    public void setDescriptionLine(int descriptionLine, String description) {
+        this.description.set(descriptionLine, description);
+        abilityRegistry.save(id);
+    }
     public void setValue(double value) {
         this.value = value;
         abilityRegistry.save(id);

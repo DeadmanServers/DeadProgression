@@ -1,21 +1,24 @@
 package dead.deadProgression.menu.abilitymenus;
 
+import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.chatinputmanager.ChatInputManager;
 import dead.deadProgression.chatinputmanager.PendingInput;
 import dead.deadProgression.menu.Menu;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import poa.poalib.items.CreateItem;
 import poa.poalib.shaded.NBT;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -53,14 +56,23 @@ public class AbilityDescriptionMenu extends Menu {
 
         List<String> description = data.getDescription();
 
+        ItemStack freeSpace = placeholder;
+        ItemMeta meta = freeSpace.getItemMeta();
+        List<Component> freeSpaceLore = new ArrayList<>();
+        freeSpaceLore.add(Component.text(""));
+        freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Left-Click: <green>Create new"));
+        freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Middle-Click: <green>Add blank line"));
+        meta.lore(freeSpaceLore);
+        freeSpace.setItemMeta(meta);
+
         for (int i = 0; i < 27; i++) {
 
             inv.setItem(i, empty);
 
 
             if (i < 18) {
-                if (description == null || description.isEmpty() || description.size() < i) {
-                    inv.setItem(i, placeholder);
+                if (description == null || description.isEmpty() || description.size() <= i) {
+                    inv.setItem(i, freeSpace);
                     continue;
                 }
                 String s = description.get(i);
@@ -72,6 +84,13 @@ public class AbilityDescriptionMenu extends Menu {
                         nbt.setInteger("descriptionID", nbtID);
                     });
 
+                    ItemMeta iconMeta = icon.getItemMeta();
+                    List<Component> iconLore = new ArrayList<>();
+                    iconLore.add(Component.text(""));
+                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Left-Click: <green>Create new"));
+                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Middle-Click: <green>Add blank line"));
+                    freeSpaceLore.add(MiniMessage.miniMessage().deserialize("<gray>Right-Click: <red>Remove line"));
+                    iconMeta.lore(iconLore);
 
                     inv.setItem(i, icon);
                 }
@@ -108,6 +127,7 @@ public class AbilityDescriptionMenu extends Menu {
             menu.setAbilityDataID(abilityDataID);
             menu.setPreviousPage(previousPageHolder);
             menu.open(player);
+            return;
         }
 
         ItemStack currentItem = event.getCurrentItem();
@@ -138,15 +158,18 @@ public class AbilityDescriptionMenu extends Menu {
             return;
         }
 
+        if (ChatInputManager.isAwaiting(id)) {
+            ChatInputManager.cancel(id);
+        }
+
         if (descriptionID == -1) {
             if (click == ClickType.LEFT) {
-                if (ChatInputManager.isAwaiting(id)) {
-                    ChatInputManager.cancel(id);
-                }
 
                 Consumer<String> consumer = s -> {
                     data.addDescription(s);
-                    open(player);
+                    Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, t -> {
+                        open(player);
+                    });
                 };
 
                 PendingInput input = new PendingInput(consumer, "<red>You have cancelled adding a new description.");
@@ -169,7 +192,36 @@ public class AbilityDescriptionMenu extends Menu {
         SHIFT_LEFT_CLICK - Set to Empty Line
 
          */
+        if (descriptionID >= 0) {
+            if (click == ClickType.LEFT) {
 
+                Consumer<String> consumer = s -> {
+                    List<String> description = abilityData.getDescription();
+                    if (description == null || description.isEmpty() || description.size() <= descriptionID) {
+                        return;
+                    }
+                    abilityData.setDescriptionLine(descriptionID, s);
+                    Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, t -> {
+                        open(player);
+                    });
+                };
+
+                PendingInput input = new PendingInput(consumer, "<red>You have cancelled setting a description line.");
+                ChatInputManager.awaitInput(player.getUniqueId(), input);
+                player.closeInventory();
+                player.sendRichMessage("");
+                player.sendRichMessage("<green>Chaning Description: <white>Type out a line of text.");
+                return;
+            }
+            if (click == ClickType.RIGHT) {
+                abilityData.removeDescription(descriptionID);
+                open(player);
+            }
+            if (click == ClickType.MIDDLE) {
+                abilityData.setDescriptionLine(descriptionID, " ");
+                open(player);
+            }
+        }
 
     }
 
