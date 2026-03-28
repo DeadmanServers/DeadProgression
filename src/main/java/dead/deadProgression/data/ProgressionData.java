@@ -56,13 +56,15 @@ public class ProgressionData {
             this.name = yml.getString(ymlVar + ".Name");
         }
         if (yml.isSet(ymlVar + ".Categories")) {
-            this.categories = new ArrayList<>();
-            for (String category : yml.getConfigurationSection("Categories").getKeys(false)) {
+            for (String categoryStringID : yml.getStringList(ymlVar + ".Categories")) {
                 try {
-                    UUID categoryID = UUID.fromString(category);
+                    UUID categoryID = UUID.fromString(categoryStringID);
+                    if (categories.contains(categoryID)) {
+                        continue;
+                    }
                     categories.add(categoryID);
                 } catch (Exception e) {
-                    DeadProgression.INSTANCE.getLogger().warning("Failed to load ProgressionData: " + category);
+                    DeadProgression.INSTANCE.getLogger().warning("Failed to load ProgressionData: " + categoryStringID);
                     continue;
                 }
             }

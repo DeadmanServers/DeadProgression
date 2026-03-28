@@ -104,9 +104,9 @@ public class AbilityData {
         yml.saveAsync(file);
     }
     public void clearDescription() {
-        this.description = null;
+        this.description = new ArrayList<>();
 
-        yml.set(ymlVar + ".Description", List.of());
+        yml.set(ymlVar + ".Description", description);
         yml.saveAsync(file);
     }
     public void removeDescriptionLine(int line) {
@@ -122,7 +122,7 @@ public class AbilityData {
             description.add(line, newDescription);
         }
 
-        yml.set(ymlVar + ".Description", newDescription);
+        yml.set(ymlVar + ".Description", description);
         yml.saveAsync(file);
     }
     public void setValue(double value) {
