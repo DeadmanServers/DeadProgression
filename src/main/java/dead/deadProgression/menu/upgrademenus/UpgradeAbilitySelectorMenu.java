@@ -1,8 +1,8 @@
-package dead.deadProgression.menu.abilitymenus;
+package dead.deadProgression.menu.upgrademenus;
 
 import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.menu.Menu;
+import dead.deadProgression.upgrades.UpgradeData;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,38 +16,58 @@ import poa.poalib.shaded.NBT;
 import java.util.List;
 import java.util.UUID;
 
-public class AbilityMenu extends Menu {
+public class UpgradeAbilitySelectorMenu extends Menu {
 
+    private UUID upgradeDataID;
     private int page = 0;
+    private int previousPageHolder = 0;
 
     public int getPage() {
         return page;
+    }
+
+    public int getPreviousPageHolder() {
+        return previousPageHolder;
+    }
+
+    public UUID getUpgradeDataID() {
+        return upgradeDataID;
     }
 
     public void setPage(int page) {
         this.page = page;
     }
 
+    public void setPreviousPageHolder(int previousPageHolder) {
+        this.previousPageHolder = previousPageHolder;
+    }
+
+    public void setUpgradeDataID(UUID upgradeDataID) {
+        this.upgradeDataID = upgradeDataID;
+    }
+
+
     @Override
     public Inventory build() {
-        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Menu -- <gray>Page: " + page));
+        this.inventory = Bukkit.createInventory(this, 54, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Selector"));
 
         List<AbilityData> all = AbilityData.getAbilities();
 
-        inventory.setItem(18, back);
-        inventory.setItem(26, next);
+        int index = (page * 45);
 
-        int index = (page * 18);
+        inventory.setItem(45, back);
+        if (index + 45 < all.size()) {
+            inventory.setItem(53, next);
+        }
 
-        for (int slot = 0; slot < 18; slot++) {
-            if (all.size() <= index) {
+        for (int slot = 0; slot < 45; slot++) {
+            if (all.size() <= slot) {
                 inventory.setItem(slot, placeholder);
                 continue;
             }
             AbilityData data = all.get(index);
             if (data == null) {
                 inventory.setItem(slot, brokenData);
-                continue;
             }
             UUID id = data.getAbilityID();
             String name = data.getName();
@@ -61,42 +81,29 @@ public class AbilityMenu extends Menu {
             index++;
         }
 
+
         return inventory;
     }
 
     @Override
     public void handleClick(InventoryClickEvent event) {
         event.setCancelled(true);
-        ItemStack item = event.getCurrentItem();
-
-        if (item == null || item.getType() == Material.AIR) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        if (isBackButton(item)) {
+        ItemStack item = event.getCurrentItem();
+        if (item == null || item.getType() == Material.AIR) return;
+
+        ItemStack clone = item.clone();
+
+        if (isBackButton(clone)) {
             page--;
             open(player);
             return;
         }
-        if (isNextButton(item)) {
+        if (isNextButton(clone)) {
             page++;
             open(player);
             return;
-        }
-
-        ItemStack clone = item.clone();
-
-        if (isEmptyButton(clone)) {
-            UUID newID = UUID.randomUUID();
-            try {
-                AbilityEditorMenu editorMenu = new AbilityEditorMenu();
-                editorMenu.setAbilityData(new AbilityData(newID));
-                editorMenu.setPreviousPage(page);
-                editorMenu.open(player);
-                return;
-            } catch (Exception e) {
-                player.sendRichMessage("<red>ERROR: Failed to create a new ability.");
-                return;
-            }
         }
 
         String idString = NBT.get(clone, nbt -> {
@@ -110,14 +117,12 @@ public class AbilityMenu extends Menu {
             player.sendRichMessage("<red><b>ERROR:</b> <yellow>Failed to parse ID.");
             return;
         }
-        AbilityData data = AbilityData.get(id);
-        if (data == null) {
-            player.sendRichMessage("<red><b>ERROR:</b> <yellow>That ability doesn't exist.");
-            return;
-        }
-        AbilityEditorMenu abilityEditorMenu = new AbilityEditorMenu();
-        abilityEditorMenu.setAbilityData(data);
-        abilityEditorMenu.setPreviousPage(page);
-        abilityEditorMenu.open(player);
+
+        UpgradeData upgradeData = UpgradeData.getUpgrade(upgradeDataID);
+        upgradeData.setAbilityID(id);
+        UpgradeEditorMenu upgradeEditorMenu = new UpgradeEditorMenu();
+        upgradeEditorMenu.setPreviousPage(previousPageHolder);
+        upgradeEditorMenu.setUpgradeDataID(upgradeDataID);
+        upgradeEditorMenu.open(player);
     }
 }

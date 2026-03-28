@@ -2,7 +2,6 @@ package dead.deadProgression.commands;
 
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityRegistry;
 import dead.deadProgression.ability.AbilityType;
 import dead.deadProgression.itemdata.ItemUpgradeData;
 import dead.deadProgression.menu.abilitymenus.AbilityMenu;
@@ -50,11 +49,10 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
         AbilityData abilityData = null;
         if (args.length != 1) {
             if (!args[1].isBlank() && !args[0].equalsIgnoreCase("createability") && !args[0].equalsIgnoreCase("listabilities")) {
-                abilityData = abilityRegistry.get(args[1]);
+                abilityData = AbilityData.getByName(args[1]);
                 if (abilityData == null) {
                     player.sendRichMessage("<red>ERROR: <yellow>That ability does not exist.");
                     return true;
@@ -76,8 +74,10 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                 try {
                     AbilityType abilityType = AbilityType.valueOf(args[2].toUpperCase());
                     double value = Double.parseDouble(args[3]);
-                    abilityRegistry.register(newID,new AbilityData(newID, args[1], abilityType, List.of(), value));
-                    abilityRegistry.save();
+                    AbilityData newAbilityData = new AbilityData(newID);
+                    newAbilityData.setName(args[1]);
+                    newAbilityData.setType(abilityType);
+                    newAbilityData.setValue(value);
                     player.sendRichMessage("<green>SUCCESS: <white>You have created a new ability named <green>" + args[1]);
                     return true;
                 } catch (IllegalArgumentException e) {
@@ -87,13 +87,12 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             }
             case "removeability" -> {
                 String oldName = abilityData.getName();
-                abilityRegistry.unregister(abilityData);
-                abilityRegistry.save();
+                abilityData.remove();
                 player.sendRichMessage("<green>You have removed the ability named <green>" + oldName);
                 return true;
             }
             case "listabilities" -> {
-                List<String> allNames = abilityRegistry.getAllNames();
+                List<String> allNames = AbilityData.getAbilitiesNames();
                 if (allNames.isEmpty()) {
                     player.sendRichMessage("<red>ERROR: <yellow>There are no loaded abilities.");
                     return true;
@@ -109,10 +108,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             case "setdescription" -> {
                 @NotNull String[] strings = Arrays.copyOfRange(args, 2, args.length);
                 String joined = String.join(" ", strings);
-                if (!abilityData.setDescription(List.of(joined))) {
-                    player.sendRichMessage("<red>ERROR: <yellow>Something went wrong setting the description.");
-                    return true;
-                }
+                abilityData.setDescription(List.of(joined));
                 player.sendRichMessage("<green>SUCCESS: <white>You have set a new description for <green>" + abilityData.getName());
                 return true;
             }
@@ -150,7 +146,7 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
                         player.sendRichMessage("<red>ERROR: <yellow>The line number must be a positive integer or 0.");
                         return true;
                     }
-                    abilityData.removeDescription(line - 1);
+                    abilityData.removeDescriptionLine(line - 1);
                     player.sendRichMessage("<green>SUCCESS: <white>You have removed a line in the description for <green>" + abilityData.getName());
                     return true;
                 } catch (NumberFormatException e) {
@@ -165,10 +161,8 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
             case "adddescription" -> {
                 @NotNull String[] strings = Arrays.copyOfRange(args, 2, args.length);
                 String joined = String.join(" ", strings);
-                if (!abilityData.addDescription(joined)) {
-                    player.sendRichMessage("<red>ERROR: <yellow>That is not a valid description.");
-                    return true;
-                }
+                int size = abilityData.getDescription().size();
+                abilityData.setDescriptionLine(size, joined);
                 player.sendRichMessage("<green>SUCCESS: <white>You have added a line in the description for <green>" + abilityData.getName());
             }
             case "testwritepdc" -> {
@@ -224,22 +218,20 @@ public class ProgressionDebugCommand implements CommandExecutor, TabCompleter {
         List<String> inputs = new ArrayList<>();
         List<String> outputs = new ArrayList<>();
 
-        AbilityRegistry abilityRegistry = DeadProgression.abilityRegistry;
-
         if (args.length == 1) {
             inputs.addAll(List.of("createability", "removeability", "listabilities",  "setdescription", "setvalue", "settype", "removedescription", "cleardescription", "adddescription", "testwritepdc", "testreadpdc", "abilitymenu", "upgrademenu"));
         }
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
                 case "removeability", "setdescription", "setvalue", "settype", "removedescription", "cleardescription",
-                     "adddescription" -> inputs.addAll(abilityRegistry.getAllNames());
+                     "adddescription" -> inputs.addAll(AbilityData.getAbilitiesNames());
             }
         }
         if (args.length == 3) {
 
             switch (args[0].toLowerCase()) {
                 case "setvalue" -> {
-                    AbilityData abilityData = abilityRegistry.get(args[1]);
+                    AbilityData abilityData = AbilityData.getByName(args[1]);
                     if (abilityData == null) {
                         break;
                     }

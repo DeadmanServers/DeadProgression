@@ -47,11 +47,11 @@ public class AbilityDescriptionMenu extends Menu {
     @Override
     public Inventory build() {
 
-        Inventory inv = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Description Menu"));
+        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Description Menu"));
 
-        AbilityData data = abilityRegistry.get(abilityDataID);
+        AbilityData data = AbilityData.get(abilityDataID);
         if (data == null) {
-            return inv;
+            return inventory;
         }
 
         List<String> description = data.getDescription();
@@ -67,12 +67,12 @@ public class AbilityDescriptionMenu extends Menu {
 
         for (int i = 0; i < 27; i++) {
 
-            inv.setItem(i, empty);
+            inventory.setItem(i, glass);
 
 
             if (i < 18) {
                 if (description == null || description.isEmpty() || description.size() <= i) {
-                    inv.setItem(i, freeSpace);
+                    inventory.setItem(i, freeSpace);
                     continue;
                 }
                 String s = description.get(i);
@@ -93,16 +93,16 @@ public class AbilityDescriptionMenu extends Menu {
                     iconMeta.lore(iconLore);
                     icon.setItemMeta(iconMeta);
 
-                    inv.setItem(i, icon);
+                    inventory.setItem(i, icon);
                 }
 
             }
 
         }
 
-        inv.setItem(18, back);
+        inventory.setItem(18, back);
 
-        return inv;
+        return inventory;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class AbilityDescriptionMenu extends Menu {
             return;
         }
 
-        AbilityData abilityData = abilityRegistry.get(abilityDataID);
+        AbilityData abilityData = AbilityData.get(abilityDataID);
         if (abilityData == null) {
             return;
         }
@@ -155,7 +155,7 @@ public class AbilityDescriptionMenu extends Menu {
 
          */
 
-        AbilityData data = abilityRegistry.get(abilityDataID);
+        AbilityData data = AbilityData.get(abilityDataID);
         if (data == null) {
             return;
         }
@@ -165,24 +165,25 @@ public class AbilityDescriptionMenu extends Menu {
         }
 
         if (descriptionID == -1) {
+            int size = data.getDescription().size();
             if (click == ClickType.LEFT) {
 
                 Consumer<String> consumer = s -> {
-                    data.addDescription(s);
-                    Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, t -> {
+                    data.setDescriptionLine(size, s);
+                    Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, () -> {
                         open(player);
                     });
                 };
 
                 PendingInput input = new PendingInput(consumer, "<red>You have cancelled adding a new description.");
-                ChatInputManager.awaitInput(player.getUniqueId(), input);
+                ChatInputManager.awaitInput(id, input);
                 player.closeInventory();
                 player.sendRichMessage("");
                 player.sendRichMessage("<green>Adding description: <white>Type out a line of text to add.");
                 return;
             }
             if (click == ClickType.MIDDLE) {
-                data.addDescription(" ");
+                data.setDescriptionLine(size, " ");
                 open(player);
             }
         }
@@ -216,7 +217,7 @@ public class AbilityDescriptionMenu extends Menu {
                 return;
             }
             if (click == ClickType.RIGHT) {
-                abilityData.removeDescription(descriptionID);
+                abilityData.removeDescriptionLine(descriptionID);
                 open(player);
             }
             if (click == ClickType.MIDDLE) {

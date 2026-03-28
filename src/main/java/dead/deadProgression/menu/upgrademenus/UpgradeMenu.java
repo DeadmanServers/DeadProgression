@@ -3,7 +3,6 @@ package dead.deadProgression.menu.upgrademenus;
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.menu.Menu;
 import dead.deadProgression.upgrades.UpgradeData;
-import dead.deadProgression.upgrades.UpgradeRegistry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -19,6 +18,7 @@ import poa.poalib.shaded.NBT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class UpgradeMenu extends Menu {
 
@@ -38,10 +38,9 @@ public class UpgradeMenu extends Menu {
 
         this.inventory = Bukkit.createInventory(this, 54, MiniMessage.miniMessage().deserialize("<dark_gray>Upgrade Menu"));
 
-        UpgradeRegistry upgradeRegistry = DeadProgression.upgradeRegistry;
-        List<UpgradeData> all = upgradeRegistry.getAll();
+        List<UpgradeData> all = UpgradeData.getAllUpgrades();
 
-        inventory.setItem(18, back);
+        inventory.setItem(45, back);
         inventory.setItem(53, next);
 
         ItemStack freeSpace = placeholder.clone();
@@ -67,11 +66,15 @@ public class UpgradeMenu extends Menu {
             }
 
             UUID id = data.getId();
+            if (id == null) {
+                inventory.setItem(slot, brokenData);
+                continue;
+            }
             String name = data.getName();
             int allowedItemAmount = data.getAllowedItems().size();
             int tierAmount = data.getPricePerTier().size();
 
-            ItemStack icon = CreateItem.createItem(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE, name);
+            ItemStack icon = CreateItem.createItem(Material.END_CRYSTAL, name);
 
             ItemMeta iconMeta = icon.getItemMeta();
             List<Component> iconLore = new ArrayList<>();
@@ -115,7 +118,22 @@ public class UpgradeMenu extends Menu {
             }
         }
 
-        if (isEmptyHolder(item)) return; // todo Create a new upgrade and open the menu
+        if (isEmptyButton(item)) {
+            UUID newID = UUID.randomUUID();
+            try {
+                UpgradeData upgradeData = new UpgradeData(newID);
+
+                UpgradeEditorMenu upgradeEditorMenu = new UpgradeEditorMenu();
+                upgradeEditorMenu.setUpgradeDataID(newID);
+                upgradeEditorMenu.setPreviousPage(page);
+                upgradeEditorMenu.open(player);
+                return;
+            } catch (Exception e) {
+                DeadProgression.INSTANCE.getLogger().log(Level.SEVERE, "Error opening upgrade menu", e);
+                player.sendRichMessage("<red>ERROR: <white>Failed to create a new upgrade.");
+                return;
+            }
+        }
 
         ItemStack clone = item.clone();
         String idString = NBT.get(clone, nbt -> {
@@ -125,15 +143,19 @@ public class UpgradeMenu extends Menu {
         try {
             id = UUID.fromString(idString);
         } catch (IllegalArgumentException e) {
+            DeadProgression.INSTANCE.getLogger().log(Level.SEVERE, "Invalid ID: " + idString, e);
             player.sendRichMessage("<red><bold>ERROR: <yellow>Failed to parsed ID.");
             return;
         }
-        UpgradeData upgradeData = upgradeRegistry.get(id);
+        UpgradeData upgradeData = UpgradeData.getUpgrade(id);
         if (upgradeData == null) {
             player.sendRichMessage("<red><bold>ERROR: <yellow>That upgrade doesn't exist.");
             return;
         }
-
-
+        UpgradeEditorMenu upgradeEditorMenu = new UpgradeEditorMenu();
+        upgradeEditorMenu.setUpgradeDataID(id);
+        upgradeEditorMenu.setPreviousPage(page);
+        upgradeEditorMenu.open(player);
+        return;
     }
 }

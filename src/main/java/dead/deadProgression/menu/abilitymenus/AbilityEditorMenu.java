@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.checkerframework.checker.units.qual.A;
 import poa.poalib.items.CreateItem;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class AbilityEditorMenu extends Menu {
     }
 
     public void setAbilityData(AbilityData abilityData) {
-        this.abilityDataID = abilityData.getId();
+        this.abilityDataID = abilityData.getAbilityID();
     }
 
     public void setAbilityDataID(String abilityDataID) {
@@ -53,34 +52,15 @@ public class AbilityEditorMenu extends Menu {
         this.abilityDataID = abilityDataID;
     }
 
-    private List<String> buttonLore(List<String> addLore) {
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-
-        AbilityData data = abilityRegistry.get(abilityDataID);
-        if (data == null) {
-            return lore;
-        }
-
-        String name = data.getName();
-        if (name == null) {
-            return lore;
-        }
-        for (String s : addLore) {
-            lore.add(s);
-        }
-        lore.add("");
-        return lore;
-    }
 
     @Override
     public Inventory build() {
 
-        Inventory inv = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Editor"));
+        this.inventory = Bukkit.createInventory(this, 27, MiniMessage.miniMessage().deserialize("<dark_gray>Ability Editor"));
 
-        AbilityData abilityData = abilityRegistry.get(abilityDataID);
+        AbilityData abilityData = AbilityData.get(abilityDataID);
         if (abilityData == null) {
-            return inv;
+            return inventory;
         }
 
         String name = abilityData.getName();
@@ -94,21 +74,21 @@ public class AbilityEditorMenu extends Menu {
         double value = abilityData.getValue();
 
         for (int i = 0; i <= 26; i++) {
-            inv.setItem(i, empty);
+            inventory.setItem(i, glass);
         }
 
         String e1 = " <dark_gray><b>- </b><gray>Current Name: <white>" + name;
         String e2 = " <dark_gray><b>- </b><gray>Current Type: <white>" + type;
         String e3 = " <dark_gray><b>- </b><gray>Current Value: <white>" + value;
 
-        inv.setItem(0, CreateItem.createItem(Material.OAK_SIGN, "<green><bold>Change Ability's Name", buttonLore(List.of(e1))));
-        inv.setItem(1, CreateItem.createItem(Material.WRITABLE_BOOK, "<green><bold>Edit Ability's Lore", buttonLore(List.of(" <dark_gray><b>- </b><gray>Current Description: <white>" + " " + description))));
-        inv.setItem(2, CreateItem.createItem(Material.BEACON, "<green><bold>Change Ability Type", buttonLore(List.of(e2))));
-        inv.setItem(3, CreateItem.createItem(Material.EMERALD, "<green><bold>Change Ability's Value", buttonLore(List.of(e3))));
+        inventory.setItem(0, CreateItem.createItem(Material.OAK_SIGN, "<green><bold>Change Ability's Name", buttonLore(List.of(e1))));
+        inventory.setItem(1, CreateItem.createItem(Material.WRITABLE_BOOK, "<green><bold>Edit Ability's Lore", buttonLore(List.of(" <dark_gray><b>- </b><gray>Current Description: <white>" + " " + description))));
+        inventory.setItem(2, CreateItem.createItem(Material.BEACON, "<green><bold>Change Ability Type", buttonLore(List.of(e2))));
+        inventory.setItem(3, CreateItem.createItem(Material.EMERALD, "<green><bold>Change Ability's Value", buttonLore(List.of(e3))));
 
-        inv.setItem(18, back);
+        inventory.setItem(18, back);
 
-        return inv;
+        return inventory;
     }
 
     @Override
@@ -117,7 +97,7 @@ public class AbilityEditorMenu extends Menu {
         if (event.getCurrentItem() == null) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        AbilityData abilityData = abilityRegistry.get(abilityDataID);
+        AbilityData abilityData = AbilityData.get(abilityDataID);
         if (abilityData == null) return;
         String name = abilityData.getName();
 
@@ -137,10 +117,6 @@ public class AbilityEditorMenu extends Menu {
         switch (event.getRawSlot()) {
             case 0 -> {
                 Consumer<String> consumer = s -> {
-                    if (!abilityData.setName(s)) {
-                        player.sendMessage("<red><b>ERROR: </b> <yellow>Invalid ability name!");
-                        return;
-                    }
                     abilityData.setName(s);
                     player.sendRichMessage("<green><bold>Success!</b> <white>You have set the new name to: " + s);
                     Bukkit.getScheduler().runTask(DeadProgression.INSTANCE, () -> {
