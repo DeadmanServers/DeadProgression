@@ -1,7 +1,6 @@
 package dead.deadProgression.menu.abilitymenus;
 
-import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityType;
+import dead.deadProgression.data.AbilityData;
 import dead.deadProgression.menu.Menu;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;

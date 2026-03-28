@@ -1,4 +1,4 @@
-package dead.deadProgression.ability;
+package dead.deadProgression.data;
 
 public enum AbilityType {
 

@@ -1,4 +1,4 @@
-package dead.deadProgression.ability;
+package dead.deadProgression.data;
 
 import dead.deadProgression.DeadProgression;
 import poa.poalib.yml.PoaYaml;
@@ -116,10 +116,11 @@ public class AbilityData {
         yml.saveAsync(file);
     }
     public void setDescriptionLine(int line, String newDescription) {
-        if (description.contains(line)) {
+        if (line < description.size()) {
             description.set(line, newDescription);
+        } else {
+            description.add(line, newDescription);
         }
-        description.add(line, newDescription);
 
         yml.set(ymlVar + ".Description", newDescription);
         yml.saveAsync(file);

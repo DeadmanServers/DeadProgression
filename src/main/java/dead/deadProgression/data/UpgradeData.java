@@ -1,4 +1,4 @@
-package dead.deadProgression.upgrades;
+package dead.deadProgression.data;
 
 import dead.deadProgression.DeadProgression;
 import org.bukkit.Material;
@@ -13,7 +13,6 @@ public class UpgradeData {
     public static final Map<UUID, UpgradeData> upgradeData = new HashMap<>();
 
     private static final File file = new File(DeadProgression.INSTANCE.getDataFolder(), "data/upgradedata.yml");
-
     static {
         file.getParentFile().mkdirs();
     }
@@ -71,7 +70,7 @@ public class UpgradeData {
         }
         if (yml.isSet(ymlVar + ".AbilityID")) {
             String idFetch = yml.getString(ymlVar + ".AbilityID");
-            if (idFetch != null || !idFetch.isBlank()) {
+            if (idFetch != null && !idFetch.isBlank()) {
                 abilityID = UUID.fromString(idFetch);
             }
         }

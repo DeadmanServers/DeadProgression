@@ -2,7 +2,7 @@ package dead.deadProgression.menu.upgrademenus;
 
 import dead.deadProgression.DeadProgression;
 import dead.deadProgression.menu.Menu;
-import dead.deadProgression.upgrades.UpgradeData;
+import dead.deadProgression.data.UpgradeData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;

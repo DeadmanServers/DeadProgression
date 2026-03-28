@@ -1,8 +1,8 @@
 package dead.deadProgression.menu.upgrademenus;
 
-import dead.deadProgression.ability.AbilityData;
+import dead.deadProgression.data.AbilityData;
 import dead.deadProgression.menu.Menu;
-import dead.deadProgression.upgrades.UpgradeData;
+import dead.deadProgression.data.UpgradeData;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

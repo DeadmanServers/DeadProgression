@@ -1,4 +1,4 @@
-package dead.deadProgression.itemdata;
+package dead.deadProgression.data;
 
 import dead.deadProgression.DeadProgression;
 import org.bukkit.Material;

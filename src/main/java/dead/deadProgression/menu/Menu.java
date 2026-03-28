@@ -1,7 +1,6 @@
 package dead.deadProgression.menu;
 
 import dead.deadProgression.DeadProgression;
-import dead.deadProgression.progression.ProgressionRegistry;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -55,7 +54,6 @@ public abstract class Menu implements InventoryHolder {
         return lore;
     }
 
-    public static final ProgressionRegistry progressionRegistry = DeadProgression.progressionRegistry;
     public static ItemStack next = CreateItem.createItem(Material.ARROW, "<green><bold>Next");
     public static ItemStack back = CreateItem.createItem(Material.ARROW, "<red><bold>Back");
     public static ItemStack close = CreateItem.createItem(Material.BARRIER, "<red><bold>Close");

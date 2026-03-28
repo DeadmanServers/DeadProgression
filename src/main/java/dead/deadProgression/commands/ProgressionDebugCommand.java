@@ -1,9 +1,8 @@
 package dead.deadProgression.commands;
 
-import dead.deadProgression.DeadProgression;
-import dead.deadProgression.ability.AbilityData;
-import dead.deadProgression.ability.AbilityType;
-import dead.deadProgression.itemdata.ItemUpgradeData;
+import dead.deadProgression.data.AbilityData;
+import dead.deadProgression.data.AbilityType;
+import dead.deadProgression.data.ItemUpgradeData;
 import dead.deadProgression.menu.abilitymenus.AbilityMenu;
 import dead.deadProgression.menu.upgrademenus.UpgradeMenu;
 import org.bukkit.Material;

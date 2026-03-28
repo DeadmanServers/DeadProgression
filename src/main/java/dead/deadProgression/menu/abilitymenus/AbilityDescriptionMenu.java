@@ -1,7 +1,7 @@
 package dead.deadProgression.menu.abilitymenus;
 
 import dead.deadProgression.DeadProgression;
-import dead.deadProgression.ability.AbilityData;
+import dead.deadProgression.data.AbilityData;
 import dead.deadProgression.chatinputmanager.ChatInputManager;
 import dead.deadProgression.chatinputmanager.PendingInput;
 import dead.deadProgression.menu.Menu;
